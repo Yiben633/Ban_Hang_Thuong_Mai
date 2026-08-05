@@ -5,12 +5,20 @@
 @layer base {
   :root {
     color-scheme: light;
+    --primary-color: #171717;
+    --secondary-color: #404040;
+    --background-color: #fafafa;
+    --text-color: #171717;
+    --muted-color: #737373;
+    --border-color: #e5e5e5;
+    --danger-color: #525252;
+    --success-color: #404040;
   }
 
   html {
     font-family:
       'Inter', 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
-    background: #fafafa;
+    background: var(--background-color);
   }
 
   body {

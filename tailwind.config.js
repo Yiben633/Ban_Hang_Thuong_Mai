@@ -15,20 +15,24 @@ export default {
     },
     extend: {
       colors: {
-        background: '#fafafa',
+        background: 'var(--background-color)',
         surface: '#ffffff',
-        foreground: '#171717',
-        muted: '#737373',
-        border: '#e5e5e5',
+        foreground: 'var(--text-color)',
+        muted: 'var(--muted-color)',
+        border: 'var(--border-color)',
         accent: {
-          DEFAULT: '#171717',
+          DEFAULT: 'var(--primary-color)',
           foreground: '#ffffff',
-          hover: '#404040',
+          hover: 'var(--secondary-color)',
         },
         danger: {
-          DEFAULT: '#525252',
+          DEFAULT: 'var(--danger-color)',
           foreground: '#ffffff',
           subtle: '#f5f5f5',
+        },
+        success: {
+          DEFAULT: 'var(--success-color)',
+          foreground: '#ffffff',
         },
       },
       fontFamily: {
