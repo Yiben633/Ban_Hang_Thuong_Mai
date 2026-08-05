@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Heart } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard.jsx';
 import Badge from '../components/ui/Badge.jsx';
@@ -22,6 +23,7 @@ function ProductDetail() {
   const [activeImage, setActiveImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { products: relatedProducts } = useProducts({
     category: product?.category,
     page: 1,
@@ -39,6 +41,7 @@ function ProductDetail() {
     setQuantity(1);
     setActiveImage(0);
     setAddedToCart(false);
+    setIsFavorite(false);
   }, [id, product?.id]);
 
   if (!loading && !product && !error) return <Navigate to="/404" replace />;
@@ -54,6 +57,31 @@ function ProductDetail() {
             <Skeleton className="h-8 w-36" />
             <Skeleton className="h-24 w-full" />
           </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (error && !product) {
+    return (
+      <main className="flex-1 py-12">
+        <section className="page-container">
+          <ErrorState
+            message={getUserErrorMessage(
+              error,
+              'Không thể tải chi tiết sản phẩm. Vui lòng thử lại.',
+            )}
+            action={
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button variant="outline" onClick={refetch}>
+                  Thử lại
+                </Button>
+                <Button as="link" to="/products" variant="ghost">
+                  Quay lại sản phẩm
+                </Button>
+              </div>
+            }
+          />
         </section>
       </main>
     );
@@ -84,6 +112,18 @@ function ProductDetail() {
     setAddingToCart(false);
   }
 
+  function handleToggleFavorite() {
+    setIsFavorite((current) => {
+      const nextValue = !current;
+      showToast(
+        nextValue
+          ? 'Đã thêm sản phẩm vào yêu thích.'
+          : 'Đã bỏ sản phẩm khỏi yêu thích.',
+      );
+      return nextValue;
+    });
+  }
+
   const related = relatedProducts
     .filter(
       (item) => item.id !== product.id && item.category === product.category,
@@ -93,22 +133,8 @@ function ProductDetail() {
   return (
     <main className="flex-1 py-12">
       <section className="page-container">
-        {error && (
-          <ErrorState
-            message={getUserErrorMessage(
-              error,
-              'Không thể tải chi tiết sản phẩm. Vui lòng thử lại.',
-            )}
-            action={
-              <Button variant="outline" onClick={refetch}>
-                Thử lại
-              </Button>
-            }
-            className="mb-8 border-y border-border"
-          />
-        )}
         <Link
-          to="/shop"
+          to="/products"
           className="text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
         >
           Quay lại Shop
@@ -154,6 +180,9 @@ function ProductDetail() {
               {product.rating > 0 && (
                 <span className="text-sm text-muted">
                   Đánh giá {product.rating}/5
+                  {product.ratingCount > 0
+                    ? ` (${product.ratingCount} lượt)`
+                    : ''}
                 </span>
               )}
             </div>
@@ -229,6 +258,14 @@ function ProductDetail() {
                   </Button>
                   <Button variant="outline" as="link" to="/cart">
                     Xem giỏ hàng
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    leftIcon={<Heart size={16} aria-hidden="true" />}
+                    onClick={handleToggleFavorite}
+                    aria-pressed={isFavorite}
+                  >
+                    {isFavorite ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
                   </Button>
                 </div>
                 {addedToCart && (

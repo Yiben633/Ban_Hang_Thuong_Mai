@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getProductById } from '../services/productService.js';
+import * as productApi from '../api/productApi.js';
+import { normalizeProduct } from '../services/productService.js';
 
 function useProductDetail(id) {
   const [product, setProduct] = useState(null);
@@ -12,10 +13,11 @@ function useProductDetail(id) {
   useEffect(() => {
     let isCurrent = true;
 
-    if (!id) {
+    const normalizedId = String(id || '').trim();
+    if (!/^\d+$/.test(normalizedId)) {
       setProduct(null);
       setLoading(false);
-      setError(new Error('Product id is required.'));
+      setError(new Error('Product id is invalid.'));
       return undefined;
     }
 
@@ -24,8 +26,8 @@ function useProductDetail(id) {
       setError(null);
 
       try {
-        const result = await getProductById(id);
-        if (isCurrent) setProduct(result);
+        const response = await productApi.getById(normalizedId);
+        if (isCurrent) setProduct(normalizeProduct(response.data));
       } catch (requestError) {
         if (!isCurrent) return;
         setError(requestError);
