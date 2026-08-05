@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Menu, Search, ShoppingCart, X } from 'lucide-react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { appName } from '../../config/env.js';
+import { useCart } from '../../context/CartContext.jsx';
 import { cn } from '../ui/cn.js';
 
 const navigation = [
@@ -15,7 +16,8 @@ function Header({ cartCount = 0 }) {
   const [search, setSearch] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
-  const visibleCartCount = cartCount;
+  const { totalQuantity } = useCart();
+  const visibleCartCount = totalQuantity ?? cartCount;
 
   useEffect(() => {
     setMenuOpen(false);

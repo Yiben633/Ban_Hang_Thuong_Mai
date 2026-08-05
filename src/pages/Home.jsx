@@ -7,6 +7,8 @@ import ErrorState from '../components/ui/ErrorState.jsx';
 import Skeleton from '../components/ui/Skeleton.jsx';
 import useCategories from '../hooks/useCategories.js';
 import useProducts from '../hooks/useProducts.js';
+import { useCart } from '../context/CartContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 import { appName } from '../config/env.js';
 import { getUserErrorMessage } from '../utils/errors.js';
 
@@ -23,6 +25,22 @@ function Home() {
     error: categoriesError,
     refetch: refetchCategories,
   } = useCategories();
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
+
+  function handleAddToCart(product) {
+    const wasAdded = addToCart(product);
+    showToast(
+      wasAdded
+        ? 'Đã thêm sản phẩm vào giỏ hàng.'
+        : 'Không thể thêm sản phẩm vào giỏ hàng.',
+      { type: wasAdded ? 'success' : 'error' },
+    );
+  }
+
+  function handleToggleFavorite() {
+    showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
+  }
 
   return (
     <main className="flex-1 py-12 sm:py-16">
@@ -164,7 +182,12 @@ function Home() {
         ) : products.length > 0 ? (
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {products.slice(0, 3).map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onToggleFavorite={handleToggleFavorite}
+              />
             ))}
           </div>
         ) : (

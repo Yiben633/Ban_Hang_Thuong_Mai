@@ -139,6 +139,20 @@ function ProductDetail() {
     });
   }
 
+  function handleRelatedAddToCart(relatedProduct) {
+    const wasAdded = addItem(relatedProduct);
+    showToast(
+      wasAdded
+        ? 'Đã thêm sản phẩm vào giỏ hàng.'
+        : 'Không thể thêm sản phẩm vào giỏ hàng.',
+      { type: wasAdded ? 'success' : 'error' },
+    );
+  }
+
+  function handleRelatedToggleFavorite() {
+    showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
+  }
+
   return (
     <main className="flex-1 py-12">
       <section className="page-container">
@@ -295,7 +309,12 @@ function ProductDetail() {
             <h2 className="section-heading mt-2">Sản phẩm liên quan</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
-                <ProductCard key={item.id} product={item} />
+                <ProductCard
+                  key={item.id}
+                  product={item}
+                  onAddToCart={handleRelatedAddToCart}
+                  onToggleFavorite={handleRelatedToggleFavorite}
+                />
               ))}
             </div>
           </section>

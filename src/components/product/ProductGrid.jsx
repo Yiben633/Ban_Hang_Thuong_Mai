@@ -10,6 +10,8 @@ function ProductGrid({
   loading,
   error,
   onRetry,
+  onAddToCart,
+  onToggleFavorite,
   emptyTitle = 'Không tìm thấy sản phẩm',
   emptyDescription = 'Thử với từ khóa khác hoặc xóa bộ lọc hiện tại.',
 }) {
@@ -50,7 +52,12 @@ function ProductGrid({
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          onAddToCart={onAddToCart}
+          onToggleFavorite={onToggleFavorite}
+        />
       ))}
     </div>
   );

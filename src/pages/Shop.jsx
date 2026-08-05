@@ -9,6 +9,8 @@ import Modal from '../components/ui/Modal.jsx';
 import useCategories from '../hooks/useCategories.js';
 import useDebounce from '../hooks/useDebounce.js';
 import useProducts from '../hooks/useProducts.js';
+import { useCart } from '../context/CartContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 
 function ClearIcon() {
   return (
@@ -39,6 +41,8 @@ function Shop() {
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
   const filterValues = { category, minPrice, maxPrice, inStock };
   const { categories } = useCategories();
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
   const {
     products: visibleProducts,
     loading,
@@ -100,6 +104,20 @@ function Shop() {
     if (nextPage <= 1) nextParams.delete('page');
     else nextParams.set('page', nextPage);
     setSearchParams(nextParams);
+  }
+
+  function handleAddToCart(product) {
+    const wasAdded = addToCart(product);
+    showToast(
+      wasAdded
+        ? 'Đã thêm sản phẩm vào giỏ hàng.'
+        : 'Không thể thêm sản phẩm vào giỏ hàng.',
+      { type: wasAdded ? 'success' : 'error' },
+    );
+  }
+
+  function handleToggleFavorite() {
+    showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
   }
 
   const pageCount = Math.ceil(total / pageSize);
@@ -197,6 +215,8 @@ function Shop() {
               loading={loading}
               error={error}
               onRetry={refetch}
+              onAddToCart={handleAddToCart}
+              onToggleFavorite={handleToggleFavorite}
               emptyTitle={emptyTitle}
               emptyDescription={emptyDescription}
             />

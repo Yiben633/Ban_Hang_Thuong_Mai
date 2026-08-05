@@ -3,6 +3,8 @@ import { X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 import Input from '../../components/ui/Input.jsx';
+import { useCart } from '../../context/CartContext.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 import useProducts from '../../hooks/useProducts.js';
 import { getUserErrorMessage } from '../../utils/errors.js';
 
@@ -49,6 +51,8 @@ function ProductsPage() {
   );
   const { products, categories, loading, error, categoriesError, reload } =
     useProducts();
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
 
   useEffect(() => {
     setSearchKeyword(searchParams.get('q') || '');
@@ -110,6 +114,20 @@ function ProductsPage() {
 
   function handleClearSearch() {
     handleSearchChange({ target: { value: '' } });
+  }
+
+  function handleAddToCart(product) {
+    const wasAdded = addToCart(product);
+    showToast(
+      wasAdded
+        ? 'Đã thêm sản phẩm vào giỏ hàng.'
+        : 'Không thể thêm sản phẩm vào giỏ hàng.',
+      { type: wasAdded ? 'success' : 'error' },
+    );
+  }
+
+  function handleToggleFavorite() {
+    showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
   }
 
   return (
@@ -215,6 +233,8 @@ function ProductsPage() {
             loading={loading}
             error={error}
             onRetry={reload}
+            onAddToCart={handleAddToCart}
+            onToggleFavorite={handleToggleFavorite}
             emptyTitle={
               searchKeyword.trim()
                 ? 'Không tìm thấy sản phẩm'
