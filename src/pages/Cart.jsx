@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -8,9 +9,11 @@ import Card, {
   CardTitle,
 } from '../components/ui/Card.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
+import Modal from '../components/ui/Modal.jsx';
 import { formatPrice } from '../services/products.js';
 
 function Cart() {
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const {
     cartItems,
     totalQuantity,
@@ -19,6 +22,16 @@ function Cart() {
     updateQuantity,
     clearCart,
   } = useCart();
+
+  function handleQuantityChange(productId, value) {
+    const nextQuantity = Math.max(1, Math.floor(Number(value) || 1));
+    updateQuantity(productId, nextQuantity);
+  }
+
+  function handleClearCart() {
+    clearCart();
+    setConfirmOpen(false);
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -53,7 +66,7 @@ function Cart() {
             </p>
             <h1 className="section-heading mt-2">Kiem tra don hang</h1>
           </div>
-          <Button variant="ghost" onClick={clearCart}>
+          <Button variant="ghost" onClick={() => setConfirmOpen(true)}>
             Xoa tat ca
           </Button>
         </div>
@@ -68,7 +81,10 @@ function Cart() {
                 const stockLimit =
                   typeof product.stock === 'number' ? product.stock : null;
                 return (
-                  <div key={product.id} className="flex gap-4 p-5">
+                  <div
+                    key={product.id}
+                    className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start"
+                  >
                     {product.image ? (
                       <img
                         src={product.image}
@@ -91,7 +107,7 @@ function Cart() {
                       <p className="mt-1 text-sm text-muted">
                         {formatPrice(product.price)}
                       </p>
-                      <div className="mt-3 flex items-center gap-2">
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
                         <button
                           type="button"
                           onClick={() =>
@@ -102,9 +118,17 @@ function Cart() {
                         >
                           -
                         </button>
-                        <span className="min-w-8 text-center text-sm font-medium">
-                          {quantity}
-                        </span>
+                        <input
+                          type="number"
+                          min="1"
+                          max={stockLimit || undefined}
+                          value={quantity}
+                          onChange={(event) =>
+                            handleQuantityChange(product.id, event.target.value)
+                          }
+                          aria-label={`So luong ${product.name}`}
+                          className="h-8 w-14 rounded-md border border-border bg-surface text-center text-sm font-medium outline-none focus:ring-2 focus:ring-accent"
+                        />
                         <button
                           type="button"
                           onClick={() =>
@@ -127,7 +151,7 @@ function Cart() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-sm font-medium text-foreground">
+                    <p className="text-sm font-medium text-foreground sm:ml-auto">
                       {formatPrice(product.price * quantity)}
                     </p>
                   </div>
@@ -166,6 +190,23 @@ function Cart() {
           </Card>
         </div>
       </section>
+      <Modal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title="Xoa gio hang?"
+      >
+        <p className="text-sm leading-6 text-muted">
+          Tat ca san pham trong gio hang se bi xoa. Ban co muon tiep tuc?
+        </p>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+            Huy
+          </Button>
+          <Button variant="danger" onClick={handleClearCart}>
+            Xoa gio hang
+          </Button>
+        </div>
+      </Modal>
     </main>
   );
 }
