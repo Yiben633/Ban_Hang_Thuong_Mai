@@ -6,9 +6,9 @@ import SortSelect from '../components/product/SortSelect.jsx';
 import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input.jsx';
 import Modal from '../components/ui/Modal.jsx';
+import useCategories from '../hooks/useCategories.js';
 import useDebounce from '../hooks/useDebounce.js';
 import useProducts from '../hooks/useProducts.js';
-import { categories } from '../services/products.js';
 
 function ClearIcon() {
   return (
@@ -38,6 +38,7 @@ function Shop() {
   const inStock = searchParams.get('inStock') === '1';
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
   const filterValues = { category, minPrice, maxPrice, inStock };
+  const { categories } = useCategories();
   const {
     products: visibleProducts,
     loading,
@@ -105,15 +106,15 @@ function Shop() {
   const hasActiveFilters =
     category || minPrice || maxPrice || inStock || sort !== 'newest';
   const emptyTitle = query
-    ? 'Khong tim thay san pham'
+    ? 'Không tìm thấy sản phẩm'
     : hasActiveFilters
-      ? 'Khong co san pham phu hop'
-      : 'Chua co san pham';
+      ? 'Không có sản phẩm phù hợp'
+      : 'Chưa có sản phẩm';
   const emptyDescription = query
-    ? 'Thu voi tu khoa khac hoac xoa tim kiem.'
+    ? 'Thử với từ khóa khác hoặc xóa tìm kiếm.'
     : hasActiveFilters
-      ? 'Thu dieu chinh bo loc de xem them san pham.'
-      : 'Danh sach san pham dang duoc cap nhat.';
+      ? 'Thử điều chỉnh bộ lọc để xem thêm sản phẩm.'
+      : 'Danh sách sản phẩm đang được cập nhật.';
 
   return (
     <main className="flex-1 py-12">
@@ -121,24 +122,24 @@ function Shop() {
         <div className="flex flex-col justify-between gap-5 border-b border-border pb-8 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              Shop
+              Cửa hàng
             </p>
-            <h1 className="section-heading mt-2">Danh sach san pham</h1>
+            <h1 className="section-heading mt-2">Danh sách sản phẩm</h1>
             <p className="mt-3 text-sm text-muted">
-              {total} san pham dang hien thi
+              {total} sản phẩm đang hiển thị
             </p>
           </div>
           <div className="w-full sm:max-w-xs">
             <Input
-              label="Tim kiem"
-              placeholder="Ten san pham..."
+              label="Tìm kiếm"
+              placeholder="Tên sản phẩm..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               rightElement={
                 search ? (
                   <button
                     type="button"
-                    aria-label="Xoa tim kiem"
+                    aria-label="Xóa tìm kiếm"
                     onClick={handleClearSearch}
                     className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition hover:text-foreground focus-visible:outline-none"
                   >
@@ -158,7 +159,7 @@ function Shop() {
             className="md:hidden"
             onClick={() => setFiltersOpen(true)}
           >
-            Bo loc
+            Bộ lọc
           </Button>
           <SortSelect
             value={sort}
@@ -169,14 +170,14 @@ function Shop() {
         <div className="mt-8 grid gap-8 md:grid-cols-[220px_minmax(0,1fr)]">
           <aside className="hidden rounded-lg border border-border bg-surface p-5 md:block">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-semibold text-foreground">Bo loc</h2>
+              <h2 className="font-semibold text-foreground">Bộ lọc</h2>
               {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={handleResetFilters}
                   className="text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
                 >
-                  Dat lai
+                  Đặt lại
                 </button>
               )}
             </div>
@@ -206,7 +207,7 @@ function Shop() {
                   disabled={page === 1}
                   onClick={() => handlePageChange(page - 1)}
                 >
-                  Trang truoc
+                  Trang trước
                 </Button>
                 <span className="text-sm text-muted">
                   Trang {page} / {pageCount}
@@ -227,7 +228,7 @@ function Shop() {
       <Modal
         open={filtersOpen}
         onClose={() => setFiltersOpen(false)}
-        title="Bo loc san pham"
+        title="Bộ lọc sản phẩm"
         className="max-h-[85vh] max-w-md overflow-y-auto"
       >
         <ProductFilters

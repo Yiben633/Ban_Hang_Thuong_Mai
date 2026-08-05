@@ -1,11 +1,11 @@
 export function getUserErrorMessage(error, fallback) {
-  if (error?.status === 404) return 'Khong tim thay du lieu yeu cau.';
-  if (error?.status >= 500) return 'Dich vu dang tam thoi khong kha dung.';
+  if (error?.status === 404) return 'Không tìm thấy dữ liệu yêu cầu.';
+  if (error?.status >= 500) return 'Dịch vụ đang tạm thời không khả dụng.';
   if (error?.message?.toLowerCase().includes('timed out')) {
-    return 'Ket noi mat qua lau. Vui long thu lai.';
+    return 'Kết nối mất quá lâu. Vui lòng thử lại.';
   }
   if (error?.message?.toLowerCase().includes('connect')) {
-    return 'Khong the ket noi. Vui long kiem tra mang va thu lai.';
+    return 'Không thể kết nối. Vui lòng kiểm tra mạng và thử lại.';
   }
   return fallback;
 }

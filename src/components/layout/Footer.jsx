@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom';
 
 const footerGroups = [
   {
-    title: 'Kham pha',
+    title: 'Khám phá',
     links: [
-      { label: 'Trang chu', to: '/' },
-      { label: 'Cua hang', to: '/shop' },
-      { label: 'Gio hang', to: '/cart' },
+      { label: 'Trang chủ', to: '/' },
+      { label: 'Cửa hàng', to: '/shop' },
+      { label: 'Giỏ hàng', to: '/cart' },
     ],
   },
   {
-    title: 'Chinh sach',
+    title: 'Chính sách',
     links: [
-      { label: 'Van chuyen', to: '/404' },
-      { label: 'Doi tra', to: '/404' },
-      { label: 'Bao mat', to: '/404' },
+      { label: 'Vận chuyển', to: '/404' },
+      { label: 'Đổi trả', to: '/404' },
+      { label: 'Bảo mật', to: '/404' },
     ],
   },
 ];
@@ -32,7 +32,7 @@ function Footer() {
               Mono Store
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-6 text-muted">
-              San pham duoc chon loc cho nhung nhu cau hang ngay.
+              Sản phẩm được chọn lọc cho những nhu cầu hằng ngày.
             </p>
           </div>
 
@@ -56,7 +56,7 @@ function Footer() {
           ))}
 
           <div>
-            <h2 className="text-sm font-semibold text-foreground">Lien he</h2>
+            <h2 className="text-sm font-semibold text-foreground">Liên hệ</h2>
             <div className="mt-3 grid gap-2 text-sm text-muted">
               <a
                 href="mailto:hello@monostore.example"
@@ -70,7 +70,7 @@ function Footer() {
               >
                 0000 000 000
               </a>
-              <span>Ha Noi, Viet Nam</span>
+              <span>Hà Nội, Việt Nam</span>
             </div>
           </div>
         </div>

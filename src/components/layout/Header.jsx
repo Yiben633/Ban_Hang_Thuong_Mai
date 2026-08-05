@@ -5,8 +5,8 @@ import { useCart } from '../../context/CartContext.jsx';
 import { cn } from '../ui/cn.js';
 
 const navigation = [
-  { label: 'Trang chu', to: '/', end: true },
-  { label: 'Cua hang', to: '/shop' },
+  { label: 'Trang chủ', to: '/', end: true },
+  { label: 'Cửa hàng', to: '/shop' },
 ];
 
 function SearchIcon() {
@@ -115,7 +115,7 @@ function Header({ cartCount = 0 }) {
 
           <nav
             className="hidden items-center gap-1 md:flex"
-            aria-label="Dieu huong chinh"
+            aria-label="Điều hướng chính"
           >
             {navigation.map((item) => (
               <NavLink
@@ -139,20 +139,20 @@ function Header({ cartCount = 0 }) {
           <div className="ml-auto flex items-center gap-2">
             <form onSubmit={handleSearchSubmit} className="hidden sm:block">
               <label className="sr-only" htmlFor="site-search">
-                Tim kiem san pham
+                Tìm kiếm sản phẩm
               </label>
               <div className="relative">
                 <input
                   id="site-search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Tim san pham"
+                  placeholder="Tìm sản phẩm"
                   className="h-9 w-40 rounded-md border border-border bg-background pl-3 pr-16 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background lg:w-56"
                 />
                 {search && (
                   <button
                     type="button"
-                    aria-label="Xoa tim kiem"
+                    aria-label="Xóa tìm kiếm"
                     onClick={handleClearSearch}
                     className="absolute right-9 top-0 inline-flex h-9 w-7 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
                   >
@@ -163,7 +163,7 @@ function Header({ cartCount = 0 }) {
                 )}
                 <button
                   type="submit"
-                  aria-label="Tim kiem"
+                  aria-label="Tìm kiếm"
                   className="absolute right-0 top-0 inline-flex h-9 w-9 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
                 >
                   <span className="h-4 w-4">
@@ -177,8 +177,8 @@ function Header({ cartCount = 0 }) {
               to="/cart"
               aria-label={
                 visibleCartCount
-                  ? `Gio hang, ${visibleCartCount} san pham`
-                  : 'Gio hang'
+                  ? `Giỏ hàng, ${visibleCartCount} sản phẩm`
+                  : 'Giỏ hàng'
               }
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none"
             >
@@ -194,7 +194,7 @@ function Header({ cartCount = 0 }) {
 
             <button
               type="button"
-              aria-label={menuOpen ? 'Dong menu' : 'Mo menu'}
+              aria-label={menuOpen ? 'Đóng menu' : 'Mở menu'}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((current) => !current)}
               className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none md:hidden"
@@ -210,20 +210,20 @@ function Header({ cartCount = 0 }) {
           <div className="border-t border-border py-3 md:hidden">
             <form onSubmit={handleSearchSubmit} className="mb-2 sm:hidden">
               <label className="sr-only" htmlFor="mobile-site-search">
-                Tim kiem san pham
+                Tìm kiếm sản phẩm
               </label>
               <div className="relative">
                 <input
                   id="mobile-site-search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Tim san pham"
+                  placeholder="Tìm sản phẩm"
                   className="h-10 w-full rounded-md border border-border bg-background px-3 pr-20 text-sm outline-none placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
                 />
                 {search && (
                   <button
                     type="button"
-                    aria-label="Xoa tim kiem"
+                    aria-label="Xóa tìm kiếm"
                     onClick={handleClearSearch}
                     className="absolute right-10 top-0 inline-flex h-10 w-8 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
                   >
@@ -234,7 +234,7 @@ function Header({ cartCount = 0 }) {
                 )}
                 <button
                   type="submit"
-                  aria-label="Tim kiem"
+                  aria-label="Tìm kiếm"
                   className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center text-muted"
                 >
                   <span className="h-4 w-4">
@@ -243,7 +243,7 @@ function Header({ cartCount = 0 }) {
                 </button>
               </div>
             </form>
-            <nav className="grid gap-1" aria-label="Dieu huong mobile">
+            <nav className="grid gap-1" aria-label="Điều hướng mobile">
               {navigation.map((item) => (
                 <NavLink
                   key={item.to}

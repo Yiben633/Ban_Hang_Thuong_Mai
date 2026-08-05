@@ -2,7 +2,7 @@
 
 Mono Store is a minimal React storefront built with Vite. It includes product
 listing, search and filters, product details, a persistent cart, responsive
-layout, and a REST service layer with a demo API fallback.
+layout, and a REST service layer connected to a real product API.
 
 ## Technology
 
@@ -43,9 +43,10 @@ VITE_APP_NAME=Mono Store
 
 `VITE_API_BASE_URL` is the production REST API base URL. The product service
 requests `/products`, `/products/:id`, and `/products/categories` from it.
-When this variable is empty, the app uses `https://fakestoreapi.com` as a demo
-fallback. Set the real endpoint in the deployment platform environment before
-building production.
+The local example uses `https://fakestoreapi.com`, a public REST API. Replace
+it with your production API endpoint before deploying. The API must expose
+`/products`, `/products/:id`, and `/products/categories` or the service layer
+must be adapted to its contract.
 
 `.env.local`, `.env.production`, and other real environment files are ignored
 by Git. Only `.env.example` belongs in the repository.

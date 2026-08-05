@@ -21,14 +21,14 @@ function ProductGrid({
   loading,
   error,
   onRetry,
-  emptyTitle = 'Khong tim thay san pham',
-  emptyDescription = 'Thu voi tu khoa khac hoac xoa bo loc hien tai.',
+  emptyTitle = 'Không tìm thấy sản phẩm',
+  emptyDescription = 'Thử với từ khóa khác hoặc xóa bộ lọc hiện tại.',
 }) {
   if (loading) {
     return (
       <div
         className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
-        aria-label="Loading products"
+        aria-label="Đang tải sản phẩm"
       >
         {Array.from({ length: 6 }, (_, index) => (
           <ProductCardSkeleton key={index} />
@@ -41,10 +41,13 @@ function ProductGrid({
     <>
       {error && (
         <ErrorState
-          message={`${getUserErrorMessage(error, 'Khong the tai danh sach san pham.')} Dang hien thi du lieu demo de ban tiep tuc xem san pham.`}
+          message={getUserErrorMessage(
+            error,
+            'Không thể tải danh sách sản phẩm. Vui lòng thử lại.',
+          )}
           action={
             <Button variant="outline" onClick={onRetry}>
-              Thu lai
+              Thử lại
             </Button>
           }
           className="border-y border-border"

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getProducts } from '../services/productService.js';
-import { products as demoProducts } from '../services/products.js';
 
 const PAGE_SIZE = 6;
 
@@ -91,12 +90,8 @@ function useProducts({
       } catch (requestError) {
         if (!isCurrent) return;
         setError(requestError);
-        const fallbackProducts = filterAndSortProducts(
-          demoProducts,
-          stableParams,
-        );
-        setTotal(fallbackProducts.length);
-        setProducts(paginateProducts(fallbackProducts, page));
+        setTotal(0);
+        setProducts([]);
       } finally {
         if (isCurrent) setLoading(false);
       }

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../ui/Badge.jsx';
 import Button from '../ui/Button.jsx';
-import { formatPrice } from '../../services/products.js';
+import { formatCurrency } from '../../utils/format.js';
 
 const ProductCard = memo(function ProductCard({ product }) {
   return (
@@ -10,7 +10,7 @@ const ProductCard = memo(function ProductCard({ product }) {
       <Link
         to={`/product/${product.id}`}
         className="block focus-visible:outline-none"
-        aria-label={`Xem chi tiet ${product.name}`}
+        aria-label={`Xem chi tiết ${product.name}`}
       >
         {product.image ? (
           <img
@@ -34,16 +34,16 @@ const ProductCard = memo(function ProductCard({ product }) {
             {product.name}
           </h2>
         </div>
-        <Badge variant="neutral">Moi</Badge>
+        <Badge variant="neutral">Mới</Badge>
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground">
-            {formatPrice(product.price)}
+            {formatCurrency(product.price)}
           </p>
           {product.rating > 0 && (
             <p className="mt-1 text-xs text-muted">
-              Danh gia {product.rating}/5
+              Đánh giá {product.rating}/5
             </p>
           )}
         </div>
@@ -53,7 +53,7 @@ const ProductCard = memo(function ProductCard({ product }) {
           variant="outline"
           className="shrink-0 px-3 text-xs sm:px-4 sm:text-sm"
         >
-          Xem chi tiet
+          Xem chi tiết
         </Button>
       </div>
     </article>

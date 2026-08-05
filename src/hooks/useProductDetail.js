@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getProductById } from '../services/productService.js';
-import { products as demoProducts } from '../services/products.js';
 
 function useProductDetail(id) {
   const [product, setProduct] = useState(null);
@@ -30,7 +29,7 @@ function useProductDetail(id) {
       } catch (requestError) {
         if (!isCurrent) return;
         setError(requestError);
-        setProduct(demoProducts.find((item) => item.id === id) || null);
+        setProduct(null);
       } finally {
         if (isCurrent) setLoading(false);
       }

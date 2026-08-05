@@ -48,7 +48,7 @@ const Button = forwardRef(function Button(
       )}
       {...props}
     >
-      {loading ? <Spinner size="sm" label="Dang xu ly" /> : leftIcon}
+      {loading ? <Spinner size="sm" label="Đang xử lý" /> : leftIcon}
       {children}
       {!loading && rightIcon}
     </Component>

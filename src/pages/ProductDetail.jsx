@@ -10,7 +10,7 @@ import useProductDetail from '../hooks/useProductDetail.js';
 import useProducts from '../hooks/useProducts.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
-import { formatPrice } from '../services/products.js';
+import { formatCurrency } from '../utils/format.js';
 import { getUserErrorMessage } from '../utils/errors.js';
 
 function ProductDetail() {
@@ -75,11 +75,11 @@ function ProductDetail() {
     await new Promise((resolve) => setTimeout(resolve, 200));
     const wasAdded = addItem(product, quantity);
     if (!wasAdded) {
-      showToast('Khong the them san pham vao gio hang.', { type: 'error' });
+      showToast('Không thể thêm sản phẩm vào giỏ hàng.', { type: 'error' });
       setAddingToCart(false);
       return;
     }
-    showToast('Da them san pham vao gio hang.');
+    showToast('Đã thêm sản phẩm vào giỏ hàng.');
     setAddedToCart(true);
     setAddingToCart(false);
   }
@@ -95,10 +95,13 @@ function ProductDetail() {
       <section className="page-container">
         {error && (
           <ErrorState
-            message={`${getUserErrorMessage(error, 'Khong the tai chi tiet san pham.')} Dang hien thi du lieu demo.`}
+            message={getUserErrorMessage(
+              error,
+              'Không thể tải chi tiết sản phẩm. Vui lòng thử lại.',
+            )}
             action={
               <Button variant="outline" onClick={refetch}>
-                Thu lai
+                Thử lại
               </Button>
             }
             className="mb-8 border-y border-border"
@@ -108,7 +111,7 @@ function ProductDetail() {
           to="/shop"
           className="text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
         >
-          Quay lai Shop
+          Quay lại Shop
         </Link>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -130,7 +133,7 @@ function ProductDetail() {
                     className={`aspect-square overflow-hidden rounded-md border bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                       activeImage === index ? 'border-accent' : 'border-border'
                     }`}
-                    aria-label={`Xem anh ${index + 1}`}
+                    aria-label={`Xem ảnh ${index + 1}`}
                   >
                     <img
                       src={image}
@@ -147,10 +150,10 @@ function ProductDetail() {
 
           <div className="lg:pt-8">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="neutral">{product.category || 'San pham'}</Badge>
+              <Badge variant="neutral">{product.category || 'Sản phẩm'}</Badge>
               {product.rating > 0 && (
                 <span className="text-sm text-muted">
-                  Danh gia {product.rating}/5
+                  Đánh giá {product.rating}/5
                 </span>
               )}
             </div>
@@ -158,18 +161,18 @@ function ProductDetail() {
               {product.name}
             </h1>
             <p className="mt-4 break-words text-2xl font-semibold text-foreground">
-              {formatPrice(product.price)}
+              {formatCurrency(product.price)}
             </p>
             <p className="mt-6 max-w-lg leading-7 text-muted">
               {product.description ||
-                'Thong tin chi tiet san pham dang duoc cap nhat.'}
+                'Thông tin chi tiết sản phẩm đang được cập nhật.'}
             </p>
             <p className="mt-4 text-sm text-muted">
               {isOutOfStock
-                ? 'Tam het hang'
+                ? 'Tạm hết hàng'
                 : stockLimit === null
-                  ? 'San sang dat hang'
-                  : `Con ${stockLimit} san pham`}
+                  ? 'Sẵn sàng đặt hàng'
+                  : `Còn ${stockLimit} sản phẩm`}
             </p>
 
             <Card className="mt-8">
@@ -179,14 +182,14 @@ function ProductDetail() {
                     htmlFor="quantity"
                     className="text-sm font-medium text-foreground"
                   >
-                    So luong
+                    Số lượng
                   </label>
                   <div className="mt-2 flex w-fit items-center rounded-md border border-border">
                     <button
                       type="button"
                       onClick={() => setSafeQuantity(quantity - 1)}
                       disabled={isOutOfStock || quantity <= 1}
-                      aria-label="Giam so luong"
+                      aria-label="Giảm số lượng"
                       className="h-10 w-10 text-lg text-muted hover:bg-neutral-100 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       -
@@ -200,7 +203,7 @@ function ProductDetail() {
                       onChange={(event) => setSafeQuantity(event.target.value)}
                       disabled={isOutOfStock}
                       className="h-10 w-14 border-x border-border bg-transparent text-center text-sm font-medium outline-none focus:ring-2 focus:ring-accent"
-                      aria-label="So luong san pham"
+                      aria-label="Số lượng sản phẩm"
                     />
                     <button
                       type="button"
@@ -209,7 +212,7 @@ function ProductDetail() {
                         isOutOfStock ||
                         (stockLimit !== null && quantity >= stockLimit)
                       }
-                      aria-label="Tang so luong"
+                      aria-label="Tăng số lượng"
                       className="h-10 w-10 text-lg text-muted hover:bg-neutral-100 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       +
@@ -222,15 +225,15 @@ function ProductDetail() {
                     disabled={isOutOfStock}
                     onClick={handleAddToCart}
                   >
-                    {isOutOfStock ? 'Het hang' : 'Them vao gio hang'}
+                    {isOutOfStock ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
                   </Button>
                   <Button variant="outline" as="link" to="/cart">
-                    Xem gio hang
+                    Xem giỏ hàng
                   </Button>
                 </div>
                 {addedToCart && (
                   <p className="text-sm text-foreground" role="status">
-                    Da them san pham vao gio hang.
+                    Đã thêm sản phẩm vào giỏ hàng.
                   </p>
                 )}
               </CardContent>
@@ -241,9 +244,9 @@ function ProductDetail() {
         {related.length > 0 && (
           <section className="mt-20 border-t border-border pt-10">
             <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              Co the ban se thich
+              Có thể bạn sẽ thích
             </p>
-            <h2 className="section-heading mt-2">San pham lien quan</h2>
+            <h2 className="section-heading mt-2">Sản phẩm liên quan</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
                 <ProductCard key={item.id} product={item} />

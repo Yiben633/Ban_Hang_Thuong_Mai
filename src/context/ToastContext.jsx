@@ -49,7 +49,7 @@ export function ToastProvider({ children }) {
             <button
               type="button"
               onClick={() => dismissToast(toast.id)}
-              aria-label="Dong thong bao"
+              aria-label="Đóng thông báo"
               className="shrink-0 text-current opacity-70 hover:opacity-100"
             >
               x

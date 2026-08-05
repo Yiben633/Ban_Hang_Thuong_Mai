@@ -9,13 +9,13 @@ function NotFound() {
           404
         </p>
         <h1 className="mt-3 text-3xl font-bold text-neutral-950">
-          Khong tim thay trang
+          Không tìm thấy trang
         </h1>
         <p className="mt-4 leading-8 text-neutral-600">
-          Duong dan nay khong ton tai hoac da duoc di chuyen.
+          Đường dẫn này không tồn tại hoặc đã được di chuyển.
         </p>
         <Button as="link" to="/" className="mt-6">
-          Ve trang chu
+          Về trang chủ
         </Button>
       </section>
     </main>
