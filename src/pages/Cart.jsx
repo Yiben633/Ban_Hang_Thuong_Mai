@@ -100,7 +100,7 @@ function Cart() {
                     <div className="min-w-0 flex-1">
                       <Link
                         to={`/product/${product.id}`}
-                        className="font-medium text-foreground hover:underline"
+                        className="break-words font-medium text-foreground hover:underline"
                       >
                         {product.name}
                       </Link>
@@ -151,7 +151,7 @@ function Cart() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-sm font-medium text-foreground sm:ml-auto">
+                    <p className="whitespace-nowrap text-sm font-medium text-foreground sm:ml-auto">
                       {formatPrice(product.price * quantity)}
                     </p>
                   </div>

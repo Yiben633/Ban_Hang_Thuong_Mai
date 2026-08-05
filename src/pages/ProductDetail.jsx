@@ -142,10 +142,10 @@ function ProductDetail() {
                 </span>
               )}
             </div>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="mt-3 break-words text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               {product.name}
             </h1>
-            <p className="mt-4 text-2xl font-semibold text-foreground">
+            <p className="mt-4 break-words text-2xl font-semibold text-foreground">
               {formatPrice(product.price)}
             </p>
             <p className="mt-6 max-w-lg leading-7 text-muted">

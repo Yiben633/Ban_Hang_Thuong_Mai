@@ -179,7 +179,7 @@ function Header({ cartCount = 0 }) {
                   ? `Gio hang, ${visibleCartCount} san pham`
                   : 'Gio hang'
               }
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none"
             >
               <span className="h-5 w-5">
                 <CartIcon />
@@ -196,7 +196,7 @@ function Header({ cartCount = 0 }) {
               aria-label={menuOpen ? 'Dong menu' : 'Mo menu'}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((current) => !current)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none md:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none md:hidden"
             >
               <span className="h-5 w-5">
                 <MenuIcon open={menuOpen} />

@@ -19,7 +19,7 @@ function ProductGrid({ products = [], loading, error, onRetry }) {
   if (loading) {
     return (
       <div
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
         aria-label="Loading products"
       >
         {Array.from({ length: 6 }, (_, index) => (
@@ -43,7 +43,7 @@ function ProductGrid({ products = [], loading, error, onRetry }) {
         />
       )}
       {products.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

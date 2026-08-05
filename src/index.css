@@ -16,7 +16,7 @@
   body {
     min-width: 320px;
     min-height: 100vh;
-    @apply bg-background font-sans text-foreground antialiased;
+    @apply overflow-x-hidden bg-background font-sans text-foreground antialiased;
   }
 
   ::selection {
