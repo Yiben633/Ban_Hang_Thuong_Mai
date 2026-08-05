@@ -22,6 +22,20 @@ function SearchIcon() {
   );
 }
 
+function ClearIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      aria-hidden="true"
+    >
+      <path d="m7 7 10 10M17 7 7 17" />
+    </svg>
+  );
+}
+
 function CartIcon() {
   return (
     <svg
@@ -70,12 +84,18 @@ function Header({ cartCount = 0 }) {
 
   useEffect(() => {
     setMenuOpen(false);
+    setSearch(new URLSearchParams(location.search).get('q') || '');
   }, [location.pathname, location.search]);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
     const query = search.trim();
-    navigate(query ? `/shop?search=${encodeURIComponent(query)}` : '/shop');
+    navigate(query ? `/shop?q=${encodeURIComponent(query)}` : '/shop');
+  }
+
+  function handleClearSearch() {
+    setSearch('');
+    navigate('/shop');
   }
 
   return (
@@ -123,8 +143,20 @@ function Header({ cartCount = 0 }) {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Tim san pham"
-                  className="h-9 w-40 rounded-md border border-border bg-background pl-3 pr-9 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background lg:w-56"
+                  className="h-9 w-40 rounded-md border border-border bg-background pl-3 pr-16 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background lg:w-56"
                 />
+                {search && (
+                  <button
+                    type="button"
+                    aria-label="Xoa tim kiem"
+                    onClick={handleClearSearch}
+                    className="absolute right-9 top-0 inline-flex h-9 w-7 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
+                  >
+                    <span className="h-4 w-4">
+                      <ClearIcon />
+                    </span>
+                  </button>
+                )}
                 <button
                   type="submit"
                   aria-label="Tim kiem"
@@ -180,8 +212,20 @@ function Header({ cartCount = 0 }) {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Tim san pham"
-                  className="h-10 w-full rounded-md border border-border bg-background px-3 pr-10 text-sm outline-none placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
+                  className="h-10 w-full rounded-md border border-border bg-background px-3 pr-20 text-sm outline-none placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
                 />
+                {search && (
+                  <button
+                    type="button"
+                    aria-label="Xoa tim kiem"
+                    onClick={handleClearSearch}
+                    className="absolute right-10 top-0 inline-flex h-10 w-8 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
+                  >
+                    <span className="h-4 w-4">
+                      <ClearIcon />
+                    </span>
+                  </button>
+                )}
                 <button
                   type="submit"
                   aria-label="Tim kiem"

@@ -2,6 +2,18 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getProducts } from '../services/productService.js';
 import { products as demoProducts } from '../services/products.js';
 
+function getDemoProducts({ search, category }) {
+  const query = search?.trim().toLowerCase();
+
+  return demoProducts.filter((product) => {
+    const matchesSearch =
+      !query ||
+      `${product.name} ${product.category}`.toLowerCase().includes(query);
+    const matchesCategory = !category || product.category === category;
+    return matchesSearch && matchesCategory;
+  });
+}
+
 function useProducts({ search, category, sort, page } = {}) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +40,7 @@ function useProducts({ search, category, sort, page } = {}) {
       } catch (requestError) {
         if (!isCurrent) return;
         setError(requestError);
-        setProducts(demoProducts);
+        setProducts(getDemoProducts(stableParams));
       } finally {
         if (isCurrent) setLoading(false);
       }

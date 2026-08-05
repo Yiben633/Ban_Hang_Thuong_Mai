@@ -1,13 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 import Input from '../components/ui/Input.jsx';
+import useDebounce from '../hooks/useDebounce.js';
 import useProducts from '../hooks/useProducts.js';
 import { categories } from '../services/products.js';
 
+function ClearIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      aria-hidden="true"
+    >
+      <path d="m7 7 10 10M17 7 7 17" />
+    </svg>
+  );
+}
+
 function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const query = searchParams.get('q') || '';
+  const [search, setSearch] = useState(query);
+  const debouncedSearch = useDebounce(search, 300);
   const category = searchParams.get('category') || 'Tat ca';
   const {
     products: visibleProducts,
@@ -16,9 +33,23 @@ function Shop() {
     refetch,
     total,
   } = useProducts({
-    search: search.trim() || undefined,
+    search: debouncedSearch.trim() || undefined,
     category: category === 'Tat ca' ? undefined : category,
   });
+
+  useEffect(() => {
+    setSearch(query);
+  }, [query]);
+
+  useEffect(() => {
+    const nextQuery = debouncedSearch.trim();
+    if (nextQuery === query) return;
+
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextQuery) nextParams.set('q', nextQuery);
+    else nextParams.delete('q');
+    setSearchParams(nextParams, { replace: true });
+  }, [debouncedSearch, query, searchParams, setSearchParams]);
 
   function handleCategoryChange(event) {
     const value = event.target.value;
@@ -26,6 +57,10 @@ function Shop() {
     if (value === 'Tat ca') nextParams.delete('category');
     else nextParams.set('category', value);
     setSearchParams(nextParams);
+  }
+
+  function handleClearSearch() {
+    setSearch('');
   }
 
   return (
@@ -47,6 +82,20 @@ function Shop() {
               placeholder="Ten san pham..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
+              rightElement={
+                search ? (
+                  <button
+                    type="button"
+                    aria-label="Xoa tim kiem"
+                    onClick={handleClearSearch}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition hover:text-foreground focus-visible:outline-none"
+                  >
+                    <span className="h-4 w-4">
+                      <ClearIcon />
+                    </span>
+                  </button>
+                ) : null
+              }
             />
           </div>
         </div>
