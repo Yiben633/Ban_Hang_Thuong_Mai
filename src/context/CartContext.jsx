@@ -26,18 +26,22 @@ function getStockLimit(product) {
 }
 
 function clampQuantity(product, quantity) {
-  const nextQuantity = Math.max(0, Math.floor(Number(quantity) || 0));
+  const nextQuantity = Math.max(1, Math.floor(Number(quantity) || 1));
   const stockLimit = getStockLimit(product);
   return stockLimit === null
     ? nextQuantity
-    : Math.min(nextQuantity, Math.max(0, stockLimit));
+    : Math.min(nextQuantity, Math.max(1, stockLimit));
 }
 
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(readStoredCart);
 
   useEffect(() => {
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    try {
+      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch {
+      // Storage can be unavailable in private browsing or restricted contexts.
+    }
   }, [cartItems]);
 
   const addItem = useCallback((product, quantity = 1) => {
@@ -78,13 +82,36 @@ export function CartProvider({ children }) {
 
   const updateQuantity = useCallback((productId, quantity) => {
     setCartItems((currentItems) =>
-      currentItems.flatMap((item) => {
-        if (item.product.id !== productId) return [item];
-        const nextQuantity = clampQuantity(item.product, quantity);
-        return nextQuantity > 0 ? [{ ...item, quantity: nextQuantity }] : [];
-      }),
+      currentItems.map((item) =>
+        item.product.id === productId
+          ? { ...item, quantity: clampQuantity(item.product, quantity) }
+          : item,
+      ),
     );
   }, []);
+
+  const changeQuantity = useCallback((productId, amount) => {
+    setCartItems((currentItems) =>
+      currentItems.map((item) =>
+        item.product.id === productId
+          ? {
+              ...item,
+              quantity: clampQuantity(item.product, item.quantity + amount),
+            }
+          : item,
+      ),
+    );
+  }, []);
+
+  const increaseQuantity = useCallback(
+    (productId) => changeQuantity(productId, 1),
+    [changeQuantity],
+  );
+
+  const decreaseQuantity = useCallback(
+    (productId) => changeQuantity(productId, -1),
+    [changeQuantity],
+  );
 
   const clearCart = useCallback(() => {
     setCartItems([]);
@@ -98,6 +125,10 @@ export function CartProvider({ children }) {
     (total, item) => total + item.product.price * item.quantity,
     0,
   );
+  const addToCart = addItem;
+  const removeFromCart = removeItem;
+  const getCartItemCount = useCallback(() => totalQuantity, [totalQuantity]);
+  const getCartTotal = useCallback(() => subtotal, [subtotal]);
   const value = useMemo(
     () => ({
       cartItems,
@@ -106,7 +137,13 @@ export function CartProvider({ children }) {
       addItem,
       removeItem,
       updateQuantity,
+      addToCart,
+      removeFromCart,
+      increaseQuantity,
+      decreaseQuantity,
       clearCart,
+      getCartItemCount,
+      getCartTotal,
     }),
     [
       cartItems,
@@ -115,7 +152,13 @@ export function CartProvider({ children }) {
       addItem,
       removeItem,
       updateQuantity,
+      addToCart,
+      removeFromCart,
+      increaseQuantity,
+      decreaseQuantity,
       clearCart,
+      getCartItemCount,
+      getCartTotal,
     ],
   );
 
