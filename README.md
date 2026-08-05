@@ -1,10 +1,10 @@
-# Website Bán Hàng
+# Mono Store
 
-Website thương mại điện tử được xây dựng bằng ReactJS và Vite. Dự án đang
-được phát triển theo từng giai đoạn, với giao diện đơn sắc, hiện đại và tối
-giản theo tài liệu [Vibecode Prompts](./vibecode-website-ban-hang.md).
+Mono Store is a minimal React storefront built with Vite. It includes product
+listing, search and filters, product details, a persistent cart, responsive
+layout, and a REST service layer with a demo API fallback.
 
-## Công nghệ sử dụng
+## Technology
 
 - React 18
 - Vite 5
@@ -12,77 +12,56 @@ giản theo tài liệu [Vibecode Prompts](./vibecode-website-ban-hang.md).
 - Tailwind CSS 3
 - ESLint 8
 - Prettier 3
+- Node.js 24.18.0 LTS
 
-## Cấu trúc thư mục
+## Requirements
 
-```text
-.
-├── src/
-│   ├── assets/       # Hình ảnh và tài nguyên tĩnh
-│   ├── components/   # Component UI dùng chung
-│   ├── context/      # React Context dùng chung
-│   ├── hooks/        # Custom hooks
-│   ├── pages/        # Các trang theo route
-│   ├── services/     # Tầng gọi API và xử lý dữ liệu
-│   └── utils/        # Hàm tiện ích
-├── .gitignore
-├── eslint.config.js
-├── package.json
-├── tailwind.config.js
-└── vite.config.js
-```
-
-## Yêu cầu môi trường
-
-- Node.js 24.18.0 LTS hoặc phiên bản LTS tương thích
-- npm 11 hoặc phiên bản đi kèm Node.js
-
-Kiểm tra phiên bản:
+Install Node.js 24.18.0 LTS and npm. Check the versions before installing:
 
 ```bash
 node --version
 npm --version
 ```
 
-## Cài đặt và chạy dự án
+## Environment configuration
 
-Clone repository sau khi đã có URL GitHub thật, rồi chạy:
+Vite only exposes variables prefixed with `VITE_` to browser code. Never put
+passwords, private tokens, or other secrets in these variables.
+
+Create a local environment file from the example:
+
+```bash
+copy .env.example .env.local
+```
+
+Then update `.env.local`:
+
+```env
+VITE_API_BASE_URL=https://api.example.com
+VITE_APP_NAME=Mono Store
+```
+
+`VITE_API_BASE_URL` is the production REST API base URL. The product service
+requests `/products`, `/products/:id`, and `/products/categories` from it.
+When this variable is empty, the app uses `https://fakestoreapi.com` as a demo
+fallback. Set the real endpoint in the deployment platform environment before
+building production.
+
+`.env.local`, `.env.production`, and other real environment files are ignored
+by Git. Only `.env.example` belongs in the repository.
+
+## Install and run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Vite sẽ hiển thị địa chỉ local trong terminal, thường là
-`http://localhost:5173`.
+Open the local URL shown by Vite, usually `http://localhost:5173`.
 
-## Các lệnh thường dùng
+## Build and preview
 
-```bash
-npm run dev          # Chạy development server
-npm run lint         # Kiểm tra ESLint
-npm run format       # Format mã nguồn bằng Prettier
-npm run format:check # Kiểm tra format mà không chỉnh sửa file
-npm run build        # Build production
-npm run preview      # Xem thử bản build production
-```
-
-## Development Workflow
-
-Thực hiện các prompt theo đúng thứ tự trong
-[vibecode-website-ban-hang.md](./vibecode-website-ban-hang.md):
-
-1. Prompt 1: Khởi tạo React/Vite, cấu hình công cụ và routing cơ bản.
-2. Prompt 2: Quản lý Git và hoàn thiện tài liệu dự án.
-3. Prompt 3-4: Xây dựng design system và các UI component dùng chung.
-4. Prompt 5-6: Hoàn thiện layout, điều hướng và các trang chính.
-5. Prompt 7-8: Kết nối API và hiển thị danh sách sản phẩm.
-6. Prompt 9-10: Thêm tìm kiếm, bộ lọc và query params.
-7. Prompt 11-12: Hoàn thiện chi tiết sản phẩm và giỏ hàng.
-8. Prompt 13-15: Responsive, trạng thái giao diện, performance và accessibility.
-9. Prompt 16-17: Commit, cấu hình môi trường và chuẩn bị triển khai.
-
-Sau mỗi prompt:
+Run the production checks:
 
 ```bash
 npm run lint
@@ -90,28 +69,74 @@ npm run format:check
 npm run build
 ```
 
-Nếu bước đó có thay đổi giao diện, chạy thêm `npm run dev` và kiểm tra các
-route liên quan trên desktop và mobile. Chỉ chuyển sang prompt tiếp theo khi
-các kiểm tra hoàn tất và thay đổi hiện tại đã được rà soát.
-
-## Kết nối GitHub
-
-Repository local đã được khởi tạo. Sau khi tạo repository GitHub thật, thay
-`<GITHUB_REPOSITORY_URL>` bằng URL được GitHub cung cấp:
+Preview the generated `dist` directory locally:
 
 ```bash
-git remote add origin <GITHUB_REPOSITORY_URL>
-git branch -M main
-git add .
-git commit -m "chore: initialize project repository"
-git push -u origin main
+npm run preview
 ```
 
-Ví dụ định dạng URL, chỉ dùng để minh họa cú pháp:
+The build reads environment variables at build time. Restart the dev server
+after changing `.env.local`.
+
+## Deploy to Vercel
+
+1. Import the GitHub repository into Vercel.
+2. Keep the framework as Vite, or use build command `npm run build`.
+3. Set the output directory to `dist`.
+4. Add `VITE_API_BASE_URL` and `VITE_APP_NAME` in Project Settings > Environment Variables.
+5. Deploy again after saving environment variables.
+
+The included `vercel.json` keeps React Router routes working after a direct
+page refresh. Configure the production API URL for Preview and Production
+environments as appropriate.
+
+## Deploy to Netlify
+
+1. Add a new site from the GitHub repository.
+2. Set the build command to `npm run build`.
+3. Set the publish directory to `dist`.
+4. Add `VITE_API_BASE_URL` and `VITE_APP_NAME` in Site configuration > Environment variables.
+5. Trigger a new deploy after saving the variables.
+
+The `public/_redirects` file is copied to `dist` and provides the SPA fallback
+needed by React Router on Netlify.
+
+## Pre-deploy checklist
+
+- [ ] Copy `.env.example` to a local environment file and set the production API endpoint.
+- [ ] Confirm no real `.env` file, token, password, or secret is staged.
+- [ ] Run `npm run lint`.
+- [ ] Run `npm run format:check`.
+- [ ] Run `npm run build` successfully.
+- [ ] Test `/`, `/shop`, `/product/:id`, and `/cart` in the production preview.
+- [ ] Test a direct refresh on a nested route.
+- [ ] Confirm the API allows requests from the deployed site origin.
+- [ ] Confirm the deployed environment uses the correct `VITE_APP_NAME`.
+
+## Project structure
 
 ```text
-https://github.com/<your-account>/<your-repository>.git
+src/
+  assets/       static assets
+  components/   reusable UI, layout, and product components
+  config/       environment configuration
+  context/      Cart and toast contexts
+  hooks/        reusable React hooks
+  pages/        route-level pages
+  services/     API and product services
+  utils/        formatting and error utilities
 ```
 
-Không commit password, API key, access token hoặc file `.env` chứa giá trị
-thật. Các file môi trường đã được loại trừ trong `.gitignore`.
+## Development workflow
+
+The project was built incrementally through the Vibecode prompts in
+`vibecode-website-ban-hang.md`. After each feature group, run:
+
+```bash
+npm run lint
+npm run format:check
+npm run build
+```
+
+Keep commits focused and use Conventional Commits such as `feat:`, `fix:`,
+`chore:`, `docs:`, or `refactor:`.

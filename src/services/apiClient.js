@@ -1,4 +1,5 @@
-const DEFAULT_API_BASE_URL = 'https://fakestoreapi.com';
+import { apiBaseUrl } from '../config/env.js';
+
 const REQUEST_TIMEOUT_MS = 10000;
 
 export class ApiError extends Error {
@@ -10,9 +11,7 @@ export class ApiError extends Error {
   }
 }
 
-export const API_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL
-).replace(/\/$/, '');
+export const API_BASE_URL = apiBaseUrl.replace(/\/$/, '');
 
 function createUrl(path, params) {
   const url = new URL(`${API_BASE_URL}/${path.replace(/^\//, '')}`);

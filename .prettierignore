@@ -2,3 +2,5 @@ dist
 node_modules
 package-lock.json
 vibecode-website-ban-hang.md
+.env.example
+public/_redirects

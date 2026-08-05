@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { appName } from '../../config/env.js';
 import { useCart } from '../../context/CartContext.jsx';
 import { cn } from '../ui/cn.js';
 
@@ -109,7 +110,7 @@ function Header({ cartCount = 0 }) {
             to="/"
             className="shrink-0 text-base font-semibold tracking-tight text-foreground"
           >
-            Mono Store
+            {appName}
           </Link>
 
           <nav
