@@ -2,18 +2,50 @@ import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import Button from '../components/ui/Button.jsx';
 import Card, { CardContent } from '../components/ui/Card.jsx';
-import { formatPrice, products } from '../services/products.js';
+import ErrorState from '../components/ui/ErrorState.jsx';
+import Skeleton from '../components/ui/Skeleton.jsx';
+import useProductDetail from '../hooks/useProductDetail.js';
+import { formatPrice } from '../services/products.js';
 
 function ProductDetail() {
   const { id } = useParams();
-  const product = products.find((item) => item.id === id);
+  const { product, loading, error, refetch } = useProductDetail(id);
   const [quantity, setQuantity] = useState(1);
+
+  if (!loading && !product && !error) return <Navigate to="/404" replace />;
+
+  if (loading) {
+    return (
+      <main className="flex-1 py-12">
+        <section className="page-container grid gap-10 lg:grid-cols-2">
+          <Skeleton className="aspect-square" />
+          <div className="space-y-4 lg:pt-8">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-10 w-3/4" />
+            <Skeleton className="h-8 w-36" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   if (!product) return <Navigate to="/404" replace />;
 
   return (
     <main className="flex-1 py-12">
       <section className="page-container">
+        {error && (
+          <ErrorState
+            message={`${error.message} Dang hien thi du lieu demo.`}
+            action={
+              <Button variant="outline" onClick={refetch}>
+                Thu lai
+              </Button>
+            }
+            className="mb-8 border-y border-border"
+          />
+        )}
         <Link
           to="/shop"
           className="text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"

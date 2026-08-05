@@ -1,26 +1,24 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ProductCard from '../components/product/ProductCard.jsx';
-import EmptyState from '../components/ui/EmptyState.jsx';
+import ProductGrid from '../components/product/ProductGrid.jsx';
 import Input from '../components/ui/Input.jsx';
-import { categories, products } from '../services/products.js';
+import useProducts from '../hooks/useProducts.js';
+import { categories } from '../services/products.js';
 
 function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const category = searchParams.get('category') || 'Tat ca';
-
-  const visibleProducts = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return products.filter((product) => {
-      const matchesSearch =
-        !query ||
-        `${product.name} ${product.category}`.toLowerCase().includes(query);
-      const matchesCategory =
-        category === 'Tat ca' || product.category === category;
-      return matchesSearch && matchesCategory;
-    });
-  }, [category, search]);
+  const {
+    products: visibleProducts,
+    loading,
+    error,
+    refetch,
+    total,
+  } = useProducts({
+    search: search.trim() || undefined,
+    category: category === 'Tat ca' ? undefined : category,
+  });
 
   function handleCategoryChange(event) {
     const value = event.target.value;
@@ -40,7 +38,7 @@ function Shop() {
             </p>
             <h1 className="section-heading mt-2">Danh sach san pham</h1>
             <p className="mt-3 text-sm text-muted">
-              {visibleProducts.length} san pham dang hien thi
+              {total} san pham dang hien thi
             </p>
           </div>
           <div className="w-full sm:max-w-xs">
@@ -70,18 +68,12 @@ function Shop() {
           ))}
         </div>
 
-        {visibleProducts.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title="Khong tim thay san pham"
-            description="Thu voi tu khoa khac hoac xoa bo loc hien tai."
-          />
-        )}
+        <ProductGrid
+          products={visibleProducts}
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+        />
       </section>
     </main>
   );
