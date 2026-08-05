@@ -8,6 +8,9 @@ const Favorites = lazy(() => import('../pages/Favorites.jsx'));
 const Home = lazy(() => import('../pages/Home.jsx'));
 const NotFound = lazy(() => import('../pages/NotFound.jsx'));
 const ProductDetail = lazy(() => import('../pages/ProductDetail.jsx'));
+const ProductsPage = lazy(
+  () => import('../pages/ProductsPage/ProductsPage.jsx'),
+);
 const Shop = lazy(() => import('../pages/Shop.jsx'));
 
 function AppRoutes() {
@@ -15,7 +18,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Shop />} />
+        <Route path="/products" element={<ProductsPage />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/product/:id" element={<ProductDetail />} />

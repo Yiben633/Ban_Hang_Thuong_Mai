@@ -37,32 +37,33 @@ function ProductGrid({
     );
   }
 
+  if (error) {
+    return (
+      <ErrorState
+        message={getUserErrorMessage(
+          error,
+          'Không thể tải danh sách sản phẩm. Vui lòng thử lại.',
+        )}
+        action={
+          <Button variant="outline" onClick={onRetry}>
+            Thử lại
+          </Button>
+        }
+        className="border-y border-border"
+      />
+    );
+  }
+
+  if (products.length === 0) {
+    return <EmptyState title={emptyTitle} description={emptyDescription} />;
+  }
+
   return (
-    <>
-      {error && (
-        <ErrorState
-          message={getUserErrorMessage(
-            error,
-            'Không thể tải danh sách sản phẩm. Vui lòng thử lại.',
-          )}
-          action={
-            <Button variant="outline" onClick={onRetry}>
-              Thử lại
-            </Button>
-          }
-          className="border-y border-border"
-        />
-      )}
-      {products.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState title={emptyTitle} description={emptyDescription} />
-      )}
-    </>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
   );
 }
 
