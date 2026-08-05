@@ -55,6 +55,4 @@ export const products = [
   },
 ];
 
-export function formatPrice(price) {
-  return `${price.toLocaleString('vi-VN')} VND`;
-}
+export { formatCurrency as formatPrice } from '../utils/format.js';

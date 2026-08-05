@@ -2,6 +2,7 @@ import Button from '../ui/Button.jsx';
 import EmptyState from '../ui/EmptyState.jsx';
 import ErrorState from '../ui/ErrorState.jsx';
 import Skeleton from '../ui/Skeleton.jsx';
+import { getUserErrorMessage } from '../../utils/errors.js';
 import ProductCard from './ProductCard.jsx';
 
 function ProductCardSkeleton() {
@@ -15,7 +16,14 @@ function ProductCardSkeleton() {
   );
 }
 
-function ProductGrid({ products = [], loading, error, onRetry }) {
+function ProductGrid({
+  products = [],
+  loading,
+  error,
+  onRetry,
+  emptyTitle = 'Khong tim thay san pham',
+  emptyDescription = 'Thu voi tu khoa khac hoac xoa bo loc hien tai.',
+}) {
   if (loading) {
     return (
       <div
@@ -33,7 +41,7 @@ function ProductGrid({ products = [], loading, error, onRetry }) {
     <>
       {error && (
         <ErrorState
-          message={`${error.message} Dang hien thi du lieu demo de ban tiep tuc xem san pham.`}
+          message={`${getUserErrorMessage(error, 'Khong the tai danh sach san pham.')} Dang hien thi du lieu demo de ban tiep tuc xem san pham.`}
           action={
             <Button variant="outline" onClick={onRetry}>
               Thu lai
@@ -49,10 +57,7 @@ function ProductGrid({ products = [], loading, error, onRetry }) {
           ))}
         </div>
       ) : (
-        <EmptyState
-          title="Khong tim thay san pham"
-          description="Thu voi tu khoa khac hoac xoa bo loc hien tai."
-        />
+        <EmptyState title={emptyTitle} description={emptyDescription} />
       )}
     </>
   );

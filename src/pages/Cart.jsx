@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 import Button from '../components/ui/Button.jsx';
 import Card, {
   CardContent,
@@ -22,6 +23,7 @@ function Cart() {
     updateQuantity,
     clearCart,
   } = useCart();
+  const { showToast } = useToast();
 
   function handleQuantityChange(productId, value) {
     const nextQuantity = Math.max(1, Math.floor(Number(value) || 1));
@@ -31,6 +33,12 @@ function Cart() {
   function handleClearCart() {
     clearCart();
     setConfirmOpen(false);
+    showToast('Da xoa toan bo gio hang.');
+  }
+
+  function handleRemoveItem(productId) {
+    removeItem(productId);
+    showToast('Da xoa san pham khoi gio hang.');
   }
 
   if (cartItems.length === 0) {
@@ -144,7 +152,7 @@ function Cart() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => removeItem(product.id)}
+                          onClick={() => handleRemoveItem(product.id)}
                           className="ml-2 text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
                         >
                           Xoa

@@ -9,12 +9,15 @@ import Skeleton from '../components/ui/Skeleton.jsx';
 import useProductDetail from '../hooks/useProductDetail.js';
 import useProducts from '../hooks/useProducts.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 import { formatPrice } from '../services/products.js';
+import { getUserErrorMessage } from '../utils/errors.js';
 
 function ProductDetail() {
   const { id } = useParams();
   const { product, loading, error, refetch } = useProductDetail(id);
   const { addItem } = useCart();
+  const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
@@ -69,7 +72,13 @@ function ProductDetail() {
     if (isOutOfStock || addingToCart) return;
     setAddingToCart(true);
     await new Promise((resolve) => setTimeout(resolve, 200));
-    addItem(product, quantity);
+    const wasAdded = addItem(product, quantity);
+    if (!wasAdded) {
+      showToast('Khong the them san pham vao gio hang.', { type: 'error' });
+      setAddingToCart(false);
+      return;
+    }
+    showToast('Da them san pham vao gio hang.');
     setAddedToCart(true);
     setAddingToCart(false);
   }
@@ -85,7 +94,7 @@ function ProductDetail() {
       <section className="page-container">
         {error && (
           <ErrorState
-            message={`${error.message} Dang hien thi du lieu demo.`}
+            message={`${getUserErrorMessage(error, 'Khong the tai chi tiet san pham.')} Dang hien thi du lieu demo.`}
             action={
               <Button variant="outline" onClick={refetch}>
                 Thu lai

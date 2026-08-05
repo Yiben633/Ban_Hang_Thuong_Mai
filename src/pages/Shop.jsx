@@ -104,6 +104,16 @@ function Shop() {
   const pageCount = Math.ceil(total / pageSize);
   const hasActiveFilters =
     category || minPrice || maxPrice || inStock || sort !== 'newest';
+  const emptyTitle = query
+    ? 'Khong tim thay san pham'
+    : hasActiveFilters
+      ? 'Khong co san pham phu hop'
+      : 'Chua co san pham';
+  const emptyDescription = query
+    ? 'Thu voi tu khoa khac hoac xoa tim kiem.'
+    : hasActiveFilters
+      ? 'Thu dieu chinh bo loc de xem them san pham.'
+      : 'Danh sach san pham dang duoc cap nhat.';
 
   return (
     <main className="flex-1 py-12">
@@ -186,6 +196,8 @@ function Shop() {
               loading={loading}
               error={error}
               onRetry={refetch}
+              emptyTitle={emptyTitle}
+              emptyDescription={emptyDescription}
             />
             {pageCount > 1 && (
               <div className="mt-8 flex items-center justify-between border-t border-border pt-5">
