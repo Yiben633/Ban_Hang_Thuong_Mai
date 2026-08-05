@@ -25,31 +25,38 @@ function createUrl(path, params) {
   return url;
 }
 
-export async function getJson(path, params) {
+async function requestJson(path, { method = 'GET', params, body } = {}) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
     const response = await fetch(createUrl(path, params), {
-      headers: { Accept: 'application/json' },
+      method,
+      headers: {
+        Accept: 'application/json',
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
       signal: controller.signal,
     });
 
     const contentType = response.headers.get('content-type') || '';
-    const body = contentType.includes('application/json')
+    const responseBody = contentType.includes('application/json')
       ? await response.json()
       : await response.text();
 
     if (!response.ok) {
       const serverMessage =
-        typeof body === 'object' && body?.message ? body.message : null;
+        typeof responseBody === 'object' && responseBody?.message
+          ? responseBody.message
+          : null;
       throw new ApiError(
         serverMessage || `API request failed with status ${response.status}`,
         { status: response.status },
       );
     }
 
-    return body;
+    return responseBody;
   } catch (error) {
     if (error instanceof ApiError) throw error;
 
@@ -62,4 +69,20 @@ export async function getJson(path, params) {
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+export function getJson(path, params) {
+  return requestJson(path, { method: 'GET', params });
+}
+
+export function postJson(path, body) {
+  return requestJson(path, { method: 'POST', body });
+}
+
+export function putJson(path, body) {
+  return requestJson(path, { method: 'PUT', body });
+}
+
+export function deleteJson(path) {
+  return requestJson(path, { method: 'DELETE' });
 }

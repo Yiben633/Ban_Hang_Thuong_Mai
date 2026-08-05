@@ -1,4 +1,10 @@
-import { ApiError, getJson } from './apiClient.js';
+import {
+  ApiError,
+  deleteJson,
+  getJson,
+  postJson,
+  putJson,
+} from './apiClient.js';
 
 const DEFAULT_PRODUCT_IMAGE = '/product-placeholder.svg';
 
@@ -57,6 +63,19 @@ function normalizeCategory(category) {
   };
 }
 
+function toProductPayload(product = {}) {
+  return {
+    title: product.title || product.name || '',
+    price: toNumber(product.price),
+    description: product.description || '',
+    image: product.image || '',
+    category:
+      typeof product.category === 'object'
+        ? product.category.name || ''
+        : product.category || '',
+  };
+}
+
 export async function getProducts(params = {}) {
   const response = await getJson('products', {
     search: params.search,
@@ -76,6 +95,30 @@ export async function getProductById(id) {
 
   const response = await getJson(`products/${encodeURIComponent(id)}`);
   return normalizeProduct(response);
+}
+
+export async function createProduct(product) {
+  const response = await postJson('products', toProductPayload(product));
+  return normalizeProduct(response);
+}
+
+export async function updateProduct(id, product) {
+  if (!id) throw new ApiError('Product id is required.');
+
+  const response = await putJson(
+    `products/${encodeURIComponent(id)}`,
+    toProductPayload(product),
+  );
+  return normalizeProduct(response);
+}
+
+export async function deleteProduct(id) {
+  if (!id) throw new ApiError('Product id is required.');
+
+  const response = await deleteJson(`products/${encodeURIComponent(id)}`);
+  return response && typeof response === 'object'
+    ? normalizeProduct(response)
+    : { id: String(id) };
 }
 
 export async function getCategories() {

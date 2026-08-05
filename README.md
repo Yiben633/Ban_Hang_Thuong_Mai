@@ -42,7 +42,17 @@ VITE_APP_NAME=Mono Store
 ```
 
 `VITE_API_BASE_URL` is the production REST API base URL. The product service
-requests `/products`, `/products/:id`, and `/products/categories` from it.
+supports these endpoints:
+
+- `getProducts(params)` -> `GET /products`
+- `getProductById(id)` -> `GET /products/:id`
+- `getCategories()` -> `GET /products/categories`
+- `createProduct(product)` -> `POST /products`
+- `updateProduct(id, product)` -> `PUT /products/:id`
+- `deleteProduct(id)` -> `DELETE /products/:id`
+
+The create, update, and delete methods are available for administration flows
+and are kept outside the storefront UI.
 The local example uses `https://fakestoreapi.com`, a public REST API. Replace
 it with your production API endpoint before deploying. The API must expose
 `/products`, `/products/:id`, and `/products/categories` or the service layer
