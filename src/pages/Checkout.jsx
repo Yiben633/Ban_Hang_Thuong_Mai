@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button.jsx';
 import Card, {
   CardContent,
@@ -20,6 +20,24 @@ const initialForm = {
   city: '',
   note: '',
 };
+
+const LAST_ORDER_STORAGE_KEY = 'mono-store-last-order';
+
+function createOrderId() {
+  const randomPart =
+    typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID().split('-')[0]
+      : Math.random().toString(36).slice(2, 10);
+  return `FS-${Date.now().toString(36).toUpperCase()}-${randomPart.toUpperCase()}`;
+}
+
+function saveLatestOrder(order) {
+  try {
+    window.localStorage.setItem(LAST_ORDER_STORAGE_KEY, JSON.stringify(order));
+  } catch {
+    // The order can still be shown in the current flow if storage is unavailable.
+  }
+}
 
 function validateForm(form) {
   const errors = {};
@@ -47,9 +65,9 @@ function validateForm(form) {
 function Checkout() {
   const { cartItems, subtotal, clearCart } = useCart();
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -64,12 +82,28 @@ function Checkout() {
 
     if (Object.keys(nextErrors).length > 0) return;
 
+    const order = {
+      orderId: createOrderId(),
+      customer: { ...form },
+      items: cartItems.map(({ product, quantity }) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity,
+        subtotal: product.price * quantity,
+      })),
+      total: subtotal,
+      createdAt: new Date().toISOString(),
+    };
+
+    saveLatestOrder(order);
     clearCart();
-    setSubmitted(true);
     showToast('Đặt hàng mô phỏng thành công.');
+    navigate('/order-success');
   }
 
-  if (cartItems.length === 0 && !submitted) {
+  if (cartItems.length === 0) {
     return (
       <main className="flex-1 py-12 sm:py-16">
         <section className="page-container">
@@ -80,25 +114,6 @@ function Checkout() {
           <EmptyState
             title="Giỏ hàng đang trống"
             description="Bạn cần thêm sản phẩm vào giỏ trước khi chuyển đến checkout."
-            action={
-              <Button as="link" to="/shop">
-                Tiếp tục mua hàng
-              </Button>
-            }
-            className="border-y border-border"
-          />
-        </section>
-      </main>
-    );
-  }
-
-  if (submitted) {
-    return (
-      <main className="flex-1 py-12 sm:py-16">
-        <section className="page-container">
-          <EmptyState
-            title="Đặt hàng mô phỏng thành công"
-            description="Đây chỉ là luồng thử nghiệm, chưa có thanh toán hoặc giao hàng thật."
             action={
               <Button as="link" to="/shop">
                 Tiếp tục mua hàng

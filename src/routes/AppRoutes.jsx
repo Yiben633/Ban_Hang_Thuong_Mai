@@ -7,6 +7,7 @@ const Checkout = lazy(() => import('../pages/Checkout.jsx'));
 const Favorites = lazy(() => import('../pages/Favorites.jsx'));
 const Home = lazy(() => import('../pages/Home.jsx'));
 const NotFound = lazy(() => import('../pages/NotFound.jsx'));
+const OrderSuccess = lazy(() => import('../pages/OrderSuccess.jsx'));
 const ProductDetail = lazy(() => import('../pages/ProductDetail.jsx'));
 const ProductsPage = lazy(
   () => import('../pages/ProductsPage/ProductsPage.jsx'),
@@ -25,6 +26,7 @@ function AppRoutes() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/404" element={<NotFound />} />
       </Route>
       <Route path="*" element={<NotFound />} />
