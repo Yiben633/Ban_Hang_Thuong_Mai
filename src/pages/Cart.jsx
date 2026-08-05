@@ -124,7 +124,8 @@ function Cart() {
                             updateQuantity(product.id, quantity - 1)
                           }
                           aria-label={`Giảm số lượng ${product.name}`}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-neutral-100 hover:text-foreground"
+                          disabled={quantity <= 1}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-neutral-100 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           -
                         </button>
@@ -155,6 +156,7 @@ function Cart() {
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(product.id)}
+                          aria-label={`Xóa ${product.name} khỏi giỏ hàng`}
                           className="ml-2 text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
                         >
                           Xóa
@@ -191,7 +193,9 @@ function Cart() {
               </div>
             </CardContent>
             <CardFooter className="grid gap-3">
-              <Button className="w-full">Tiến hành thanh toán</Button>
+              <Button as="link" to="/checkout" className="w-full">
+                Tiến hành thanh toán
+              </Button>
               <Link
                 to="/shop"
                 className="text-center text-sm text-muted hover:text-foreground hover:underline"
