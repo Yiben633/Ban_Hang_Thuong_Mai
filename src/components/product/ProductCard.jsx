@@ -11,6 +11,7 @@ const ProductCard = memo(function ProductCard({
   product,
   onAddToCart,
   onToggleFavorite,
+  favoriteLabel = 'Yêu thích',
 }) {
   const [imageSrc, setImageSrc] = useState(product.image || FALLBACK_IMAGE);
 
@@ -76,7 +77,7 @@ const ProductCard = memo(function ProductCard({
           onClick={() => onToggleFavorite?.(product)}
           className="min-w-0 px-2 text-xs sm:px-3 sm:text-sm"
         >
-          Yêu thích
+          {favoriteLabel}
         </Button>
       </div>
     </article>

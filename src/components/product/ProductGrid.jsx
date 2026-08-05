@@ -12,6 +12,7 @@ function ProductGrid({
   onRetry,
   onAddToCart,
   onToggleFavorite,
+  favoriteLabel,
   emptyTitle = 'Không tìm thấy sản phẩm',
   emptyDescription = 'Thử với từ khóa khác hoặc xóa bộ lọc hiện tại.',
 }) {
@@ -57,6 +58,7 @@ function ProductGrid({
           product={product}
           onAddToCart={onAddToCart}
           onToggleFavorite={onToggleFavorite}
+          favoriteLabel={favoriteLabel}
         />
       ))}
     </div>

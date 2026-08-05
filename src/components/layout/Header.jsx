@@ -3,6 +3,7 @@ import { Menu, Search, ShoppingCart, X } from 'lucide-react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { appName } from '../../config/env.js';
 import { useCart } from '../../context/CartContext.jsx';
+import { useFavorites } from '../../context/FavoritesContext.jsx';
 import { cn } from '../ui/cn.js';
 
 const navigation = [
@@ -17,6 +18,7 @@ function Header({ cartCount = 0 }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { totalQuantity } = useCart();
+  const { favorites } = useFavorites();
   const visibleCartCount = totalQuantity ?? cartCount;
 
   useEffect(() => {
@@ -57,14 +59,19 @@ function Header({ cartCount = 0 }) {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-neutral-100 text-foreground'
                       : 'text-muted hover:bg-neutral-100 hover:text-foreground',
                   )
                 }
               >
-                {item.label}
+                <span>{item.label}</span>
+                {item.to === '/favorites' && (
+                  <span className="inline-flex min-w-4 items-center justify-center rounded-full bg-neutral-100 px-1 text-[10px] leading-4 text-muted">
+                    {favorites.length > 99 ? '99+' : favorites.length}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -174,14 +181,19 @@ function Header({ cartCount = 0 }) {
                   end={item.end}
                   className={({ isActive }) =>
                     cn(
-                      'rounded-md px-3 py-2.5 text-sm font-medium',
+                      'flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium',
                       isActive
                         ? 'bg-neutral-100 text-foreground'
                         : 'text-muted',
                     )
                   }
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+                  {item.to === '/favorites' && (
+                    <span className="inline-flex min-w-4 items-center justify-center rounded-full bg-neutral-100 px-1 text-[10px] leading-4 text-muted">
+                      {favorites.length > 99 ? '99+' : favorites.length}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </nav>
