@@ -1,8 +1,13 @@
-import { useEffect, useId } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { cn } from './cn.js';
 
 function Modal({ open, onClose, title, children, className }) {
   const titleId = useId();
+  const dialogRef = useRef(null);
+
+  useEffect(() => {
+    if (open) dialogRef.current?.focus();
+  }, [open]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -26,11 +31,9 @@ function Modal({ open, onClose, title, children, className }) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
       role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose?.();
-      }}
     >
       <section
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
