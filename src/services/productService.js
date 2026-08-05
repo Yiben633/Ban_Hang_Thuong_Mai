@@ -55,6 +55,9 @@ export async function getProducts(params = {}) {
   const response = await getJson('products', {
     search: params.search,
     category: params.category,
+    minPrice: params.minPrice,
+    maxPrice: params.maxPrice,
+    inStock: params.inStock,
     sort: params.sort,
     page: params.page,
   });

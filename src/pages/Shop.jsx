@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import ProductFilters from '../components/product/ProductFilters.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
+import SortSelect from '../components/product/SortSelect.jsx';
+import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input.jsx';
+import Modal from '../components/ui/Modal.jsx';
 import useDebounce from '../hooks/useDebounce.js';
 import useProducts from '../hooks/useProducts.js';
 import { categories } from '../services/products.js';
@@ -21,11 +25,19 @@ function ClearIcon() {
 }
 
 function Shop() {
+  const pageSize = 6;
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const [search, setSearch] = useState(query);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 300);
-  const category = searchParams.get('category') || 'Tat ca';
+  const category = searchParams.get('category') || '';
+  const minPrice = searchParams.get('minPrice') || '';
+  const maxPrice = searchParams.get('maxPrice') || '';
+  const sort = searchParams.get('sort') || 'newest';
+  const inStock = searchParams.get('inStock') === '1';
+  const page = Math.max(1, Number(searchParams.get('page')) || 1);
+  const filterValues = { category, minPrice, maxPrice, inStock };
   const {
     products: visibleProducts,
     loading,
@@ -35,6 +47,11 @@ function Shop() {
   } = useProducts({
     search: debouncedSearch.trim() || undefined,
     category: category === 'Tat ca' ? undefined : category,
+    minPrice: minPrice || undefined,
+    maxPrice: maxPrice || undefined,
+    inStock,
+    sort,
+    page,
   });
 
   useEffect(() => {
@@ -51,17 +68,42 @@ function Shop() {
     setSearchParams(nextParams, { replace: true });
   }, [debouncedSearch, query, searchParams, setSearchParams]);
 
-  function handleCategoryChange(event) {
-    const value = event.target.value;
-    const nextParams = new URLSearchParams(searchParams);
-    if (value === 'Tat ca') nextParams.delete('category');
-    else nextParams.set('category', value);
-    setSearchParams(nextParams);
+  function handleFilterChange(key, value) {
+    updateFilter(key, value);
   }
 
   function handleClearSearch() {
     setSearch('');
   }
+
+  function updateFilter(key, value) {
+    const nextParams = new URLSearchParams(searchParams);
+    if (value === '' || value === false || value === undefined) {
+      nextParams.delete(key);
+    } else {
+      nextParams.set(key, key === 'inStock' ? '1' : value);
+    }
+    if (key !== 'page') nextParams.delete('page');
+    setSearchParams(nextParams, { replace: true });
+  }
+
+  function handleResetFilters() {
+    const nextParams = new URLSearchParams();
+    if (query) nextParams.set('q', query);
+    setSearchParams(nextParams, { replace: true });
+    setFiltersOpen(false);
+  }
+
+  function handlePageChange(nextPage) {
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextPage <= 1) nextParams.delete('page');
+    else nextParams.set('page', nextPage);
+    setSearchParams(nextParams);
+  }
+
+  const pageCount = Math.ceil(total / pageSize);
+  const hasActiveFilters =
+    category || minPrice || maxPrice || inStock || sort !== 'newest';
 
   return (
     <main className="flex-1 py-12">
@@ -100,30 +142,89 @@ function Shop() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 py-6">
-          {['Tat ca', ...categories.map((item) => item.name)].map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => handleCategoryChange({ target: { value: item } })}
-              className={`rounded-full border px-3 py-1.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                category === item
-                  ? 'border-accent bg-accent text-accent-foreground'
-                  : 'border-border text-muted hover:bg-neutral-100 hover:text-foreground'
-              }`}
-            >
-              {item}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-5">
+          <Button
+            variant="outline"
+            className="md:hidden"
+            onClick={() => setFiltersOpen(true)}
+          >
+            Bo loc
+          </Button>
+          <SortSelect
+            value={sort}
+            onChange={(value) => updateFilter('sort', value)}
+          />
         </div>
 
-        <ProductGrid
-          products={visibleProducts}
-          loading={loading}
-          error={error}
-          onRetry={refetch}
-        />
+        <div className="mt-8 grid gap-8 md:grid-cols-[220px_minmax(0,1fr)]">
+          <aside className="hidden rounded-lg border border-border bg-surface p-5 md:block">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="font-semibold text-foreground">Bo loc</h2>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
+                >
+                  Dat lai
+                </button>
+              )}
+            </div>
+            <div className="mt-5">
+              <ProductFilters
+                categories={categories}
+                values={filterValues}
+                onChange={handleFilterChange}
+                onReset={handleResetFilters}
+              />
+            </div>
+          </aside>
+
+          <div className="min-w-0">
+            <ProductGrid
+              products={visibleProducts}
+              loading={loading}
+              error={error}
+              onRetry={refetch}
+            />
+            {pageCount > 1 && (
+              <div className="mt-8 flex items-center justify-between border-t border-border pt-5">
+                <Button
+                  variant="outline"
+                  disabled={page === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                >
+                  Trang truoc
+                </Button>
+                <span className="text-sm text-muted">
+                  Trang {page} / {pageCount}
+                </span>
+                <Button
+                  variant="outline"
+                  disabled={page >= pageCount}
+                  onClick={() => handlePageChange(page + 1)}
+                >
+                  Trang sau
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
       </section>
+
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Bo loc san pham"
+        className="max-h-[85vh] max-w-md overflow-y-auto"
+      >
+        <ProductFilters
+          categories={categories}
+          values={filterValues}
+          onChange={handleFilterChange}
+          onReset={handleResetFilters}
+        />
+      </Modal>
     </main>
   );
 }
