@@ -1,13 +1,6 @@
-import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import MainLayout from './components/layout/MainLayout.jsx';
+import { Suspense } from 'react';
 import Skeleton from './components/ui/Skeleton.jsx';
-
-const Cart = lazy(() => import('./pages/Cart.jsx'));
-const Home = lazy(() => import('./pages/Home.jsx'));
-const NotFound = lazy(() => import('./pages/NotFound.jsx'));
-const ProductDetail = lazy(() => import('./pages/ProductDetail.jsx'));
-const Shop = lazy(() => import('./pages/Shop.jsx'));
+import AppRoutes from './routes/AppRoutes.jsx';
 
 function RouteLoading() {
   return (
@@ -24,16 +17,7 @@ function RouteLoading() {
 function App() {
   return (
     <Suspense fallback={<RouteLoading />}>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/404" element={<NotFound />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/404" replace />} />
-      </Routes>
+      <AppRoutes />
     </Suspense>
   );
 }

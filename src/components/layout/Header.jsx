@@ -1,90 +1,21 @@
 import { useEffect, useState } from 'react';
+import { Menu, Search, ShoppingCart, X } from 'lucide-react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { appName } from '../../config/env.js';
-import { useCart } from '../../context/CartContext.jsx';
 import { cn } from '../ui/cn.js';
 
 const navigation = [
   { label: 'Trang chủ', to: '/', end: true },
   { label: 'Cửa hàng', to: '/shop' },
+  { label: 'Yêu thích', to: '/favorites' },
 ];
-
-function SearchIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="6.5" />
-      <path d="m16 16 4.5 4.5" />
-    </svg>
-  );
-}
-
-function ClearIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-    >
-      <path d="m7 7 10 10M17 7 7 17" />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-    >
-      <path d="M3.5 4.5h2l1.7 9.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.5L20.5 8H7" />
-      <circle cx="9.5" cy="19" r="1" />
-      <circle cx="17.5" cy="19" r="1" />
-    </svg>
-  );
-}
-
-function MenuIcon({ open }) {
-  return open ? (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-    >
-      <path d="m6 6 12 12M18 6 6 18" />
-    </svg>
-  ) : (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-    >
-      <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  );
-}
 
 function Header({ cartCount = 0 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
-  const { totalQuantity } = useCart();
-  const visibleCartCount = totalQuantity || cartCount;
+  const visibleCartCount = cartCount;
 
   useEffect(() => {
     setMenuOpen(false);
@@ -156,9 +87,7 @@ function Header({ cartCount = 0 }) {
                     onClick={handleClearSearch}
                     className="absolute right-9 top-0 inline-flex h-9 w-7 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
                   >
-                    <span className="h-4 w-4">
-                      <ClearIcon />
-                    </span>
+                    <X size={16} aria-hidden="true" />
                   </button>
                 )}
                 <button
@@ -166,9 +95,7 @@ function Header({ cartCount = 0 }) {
                   aria-label="Tìm kiếm"
                   className="absolute right-0 top-0 inline-flex h-9 w-9 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
                 >
-                  <span className="h-4 w-4">
-                    <SearchIcon />
-                  </span>
+                  <Search size={16} aria-hidden="true" />
                 </button>
               </div>
             </form>
@@ -182,14 +109,10 @@ function Header({ cartCount = 0 }) {
               }
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none"
             >
-              <span className="h-5 w-5">
-                <CartIcon />
+              <ShoppingCart size={20} aria-hidden="true" />
+              <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-4 text-accent-foreground">
+                {visibleCartCount > 99 ? '99+' : visibleCartCount}
               </span>
-              {visibleCartCount > 0 && (
-                <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-4 text-accent-foreground">
-                  {visibleCartCount > 99 ? '99+' : visibleCartCount}
-                </span>
-              )}
             </Link>
 
             <button
@@ -199,9 +122,11 @@ function Header({ cartCount = 0 }) {
               onClick={() => setMenuOpen((current) => !current)}
               className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none md:hidden"
             >
-              <span className="h-5 w-5">
-                <MenuIcon open={menuOpen} />
-              </span>
+              {menuOpen ? (
+                <X size={20} aria-hidden="true" />
+              ) : (
+                <Menu size={20} aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
@@ -227,9 +152,7 @@ function Header({ cartCount = 0 }) {
                     onClick={handleClearSearch}
                     className="absolute right-10 top-0 inline-flex h-10 w-8 items-center justify-center text-muted transition hover:text-foreground focus-visible:outline-none"
                   >
-                    <span className="h-4 w-4">
-                      <ClearIcon />
-                    </span>
+                    <X size={16} aria-hidden="true" />
                   </button>
                 )}
                 <button
@@ -237,9 +160,7 @@ function Header({ cartCount = 0 }) {
                   aria-label="Tìm kiếm"
                   className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center text-muted"
                 >
-                  <span className="h-4 w-4">
-                    <SearchIcon />
-                  </span>
+                  <Search size={16} aria-hidden="true" />
                 </button>
               </div>
             </form>
