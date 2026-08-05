@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext.jsx';
 import { cn } from '../ui/cn.js';
 
 const navigation = [
@@ -81,6 +82,8 @@ function Header({ cartCount = 0 }) {
   const [search, setSearch] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+  const { totalQuantity } = useCart();
+  const visibleCartCount = totalQuantity || cartCount;
 
   useEffect(() => {
     setMenuOpen(false);
@@ -172,16 +175,18 @@ function Header({ cartCount = 0 }) {
             <Link
               to="/cart"
               aria-label={
-                cartCount ? `Gio hang, ${cartCount} san pham` : 'Gio hang'
+                visibleCartCount
+                  ? `Gio hang, ${visibleCartCount} san pham`
+                  : 'Gio hang'
               }
               className="relative inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none"
             >
               <span className="h-5 w-5">
                 <CartIcon />
               </span>
-              {cartCount > 0 && (
+              {visibleCartCount > 0 && (
                 <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-4 text-accent-foreground">
-                  {cartCount > 99 ? '99+' : cartCount}
+                  {visibleCartCount > 99 ? '99+' : visibleCartCount}
                 </span>
               )}
             </Link>

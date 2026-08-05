@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext.jsx';
 import Button from '../components/ui/Button.jsx';
 import Card, {
   CardContent,
@@ -6,56 +7,132 @@ import Card, {
   CardHeader,
   CardTitle,
 } from '../components/ui/Card.jsx';
-import { formatPrice, products } from '../services/products.js';
+import EmptyState from '../components/ui/EmptyState.jsx';
+import { formatPrice } from '../services/products.js';
 
 function Cart() {
-  const cartItems = [
-    { product: products[0], quantity: 1 },
-    { product: products[1], quantity: 2 },
-  ];
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.product.price * item.quantity,
-    0,
-  );
+  const {
+    cartItems,
+    totalQuantity,
+    subtotal,
+    removeItem,
+    updateQuantity,
+    clearCart,
+  } = useCart();
 
-  return (
-    <main className="flex-1 py-12">
-      <section className="page-container">
-        <div>
+  if (cartItems.length === 0) {
+    return (
+      <main className="flex-1 py-12">
+        <section className="page-container">
           <p className="text-sm font-medium uppercase tracking-wide text-muted">
             Gio hang
           </p>
           <h1 className="section-heading mt-2">Kiem tra don hang</h1>
+          <EmptyState
+            title="Gio hang dang trong"
+            description="Them san pham tu cua hang de bat dau don hang cua ban."
+            action={
+              <Button as="link" to="/shop">
+                Tiep tuc mua hang
+              </Button>
+            }
+            className="border-y border-border"
+          />
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="flex-1 py-12">
+      <section className="page-container">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wide text-muted">
+              Gio hang
+            </p>
+            <h1 className="section-heading mt-2">Kiem tra don hang</h1>
+          </div>
+          <Button variant="ghost" onClick={clearCart}>
+            Xoa tat ca
+          </Button>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
           <Card>
             <CardHeader>
-              <CardTitle>{cartItems.length} san pham</CardTitle>
+              <CardTitle>{totalQuantity} san pham</CardTitle>
             </CardHeader>
             <CardContent className="divide-y divide-border p-0">
-              {cartItems.map(({ product, quantity }) => (
-                <div key={product.id} className="flex gap-4 p-5">
-                  <div
-                    className={`h-20 w-20 shrink-0 rounded-md ${product.tone}`}
-                    aria-hidden="true"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      to={`/product/${product.id}`}
-                      className="font-medium text-foreground hover:underline"
-                    >
-                      {product.name}
-                    </Link>
-                    <p className="mt-1 text-sm text-muted">
-                      So luong: {quantity}
+              {cartItems.map(({ product, quantity }) => {
+                const stockLimit =
+                  typeof product.stock === 'number' ? product.stock : null;
+                return (
+                  <div key={product.id} className="flex gap-4 p-5">
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="h-20 w-20 shrink-0 rounded-md bg-neutral-100 object-contain"
+                      />
+                    ) : (
+                      <div
+                        className={`h-20 w-20 shrink-0 rounded-md ${product.tone || 'bg-neutral-200'}`}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="font-medium text-foreground hover:underline"
+                      >
+                        {product.name}
+                      </Link>
+                      <p className="mt-1 text-sm text-muted">
+                        {formatPrice(product.price)}
+                      </p>
+                      <div className="mt-3 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateQuantity(product.id, quantity - 1)
+                          }
+                          aria-label={`Giam so luong ${product.name}`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-neutral-100 hover:text-foreground"
+                        >
+                          -
+                        </button>
+                        <span className="min-w-8 text-center text-sm font-medium">
+                          {quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateQuantity(product.id, quantity + 1)
+                          }
+                          disabled={
+                            stockLimit !== null && quantity >= stockLimit
+                          }
+                          aria-label={`Tang so luong ${product.name}`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-neutral-100 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeItem(product.id)}
+                          className="ml-2 text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
+                        >
+                          Xoa
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-sm font-medium text-foreground">
+                      {formatPrice(product.price * quantity)}
                     </p>
                   </div>
-                  <p className="text-sm font-medium text-foreground">
-                    {formatPrice(product.price * quantity)}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
 

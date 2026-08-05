@@ -18,16 +18,22 @@ function getResponseItems(response) {
 
 export function normalizeProduct(product = {}) {
   const rating = product.rating;
+  const stockValue = product.stock ?? product.quantity ?? product.inventory;
+  const image =
+    product.image ||
+    product.imageUrl ||
+    product.thumbnail ||
+    DEFAULT_PRODUCT_IMAGE;
+  const images = Array.isArray(product.images)
+    ? product.images.filter(Boolean)
+    : [];
 
   return {
     id: String(product.id ?? product._id ?? ''),
     name: product.name || product.title || 'Untitled product',
     price: toNumber(product.price ?? product.salePrice),
-    image:
-      product.image ||
-      product.imageUrl ||
-      product.thumbnail ||
-      DEFAULT_PRODUCT_IMAGE,
+    image,
+    images: images.length > 0 ? images : [image],
     category:
       typeof product.category === 'object'
         ? product.category.name || ''
@@ -36,7 +42,7 @@ export function normalizeProduct(product = {}) {
     rating: toNumber(
       typeof rating === 'object' ? (rating.rate ?? rating.value) : rating,
     ),
-    stock: toNumber(product.stock ?? product.quantity ?? product.inventory),
+    stock: stockValue == null ? undefined : toNumber(stockValue),
   };
 }
 
