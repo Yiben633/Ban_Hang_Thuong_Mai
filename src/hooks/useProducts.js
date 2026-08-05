@@ -40,10 +40,10 @@ function filterAndSortProducts(
     });
 }
 
-function paginateProducts(sourceProducts, page) {
+function paginateProducts(sourceProducts, page, pageSize = PAGE_SIZE) {
   const pageNumber = Math.max(1, Number(page) || 1);
-  const start = (pageNumber - 1) * PAGE_SIZE;
-  return sourceProducts.slice(start, start + PAGE_SIZE);
+  const start = (pageNumber - 1) * pageSize;
+  return sourceProducts.slice(start, start + pageSize);
 }
 
 function useProducts({
@@ -54,6 +54,7 @@ function useProducts({
   inStock,
   sort,
   page,
+  pageSize = PAGE_SIZE,
   enabled = true,
 } = {}) {
   const [products, setProducts] = useState([]);
@@ -64,8 +65,17 @@ function useProducts({
   const [total, setTotal] = useState(0);
   const [requestKey, setRequestKey] = useState(0);
   const stableParams = useMemo(
-    () => ({ search, category, minPrice, maxPrice, inStock, sort, page }),
-    [search, category, minPrice, maxPrice, inStock, sort, page],
+    () => ({
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      inStock,
+      sort,
+      page,
+      pageSize,
+    }),
+    [search, category, minPrice, maxPrice, inStock, sort, page, pageSize],
   );
 
   const refetch = useCallback(() => setRequestKey((value) => value + 1), []);
@@ -90,7 +100,7 @@ function useProducts({
         if (!isCurrent) return;
         const filteredProducts = filterAndSortProducts(result, stableParams);
         setTotal(filteredProducts.length);
-        setProducts(paginateProducts(filteredProducts, page));
+        setProducts(paginateProducts(filteredProducts, page, pageSize));
       } catch (requestError) {
         if (!isCurrent) return;
         setError(requestError);
@@ -106,7 +116,7 @@ function useProducts({
     return () => {
       isCurrent = false;
     };
-  }, [enabled, page, requestKey, stableParams]);
+  }, [enabled, page, pageSize, requestKey, stableParams]);
 
   useEffect(() => {
     let isCurrent = true;

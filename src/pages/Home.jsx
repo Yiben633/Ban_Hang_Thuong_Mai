@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import ProductCard from '../components/product/ProductCard.jsx';
+import ProductGrid from '../components/product/ProductGrid.jsx';
 import Button from '../components/ui/Button.jsx';
 import Card, { CardContent } from '../components/ui/Card.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
@@ -8,9 +8,27 @@ import Skeleton from '../components/ui/Skeleton.jsx';
 import useCategories from '../hooks/useCategories.js';
 import useProducts from '../hooks/useProducts.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useFavorites } from '../context/FavoritesContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { appName } from '../config/env.js';
 import { getUserErrorMessage } from '../utils/errors.js';
+
+const benefits = [
+  {
+    title: 'Khám phá nhanh',
+    description: 'Danh mục rõ ràng giúp bạn tìm sản phẩm phù hợp dễ dàng.',
+  },
+  {
+    title: 'Thông tin minh bạch',
+    description:
+      'Giá, đánh giá và mô tả được hiển thị ngay trên từng sản phẩm.',
+  },
+  {
+    title: 'Giỏ hàng tiện lợi',
+    description:
+      'Lưu sản phẩm yêu thích và quản lý giỏ hàng ngay trên thiết bị.',
+  },
+];
 
 function Home() {
   const {
@@ -18,7 +36,7 @@ function Home() {
     loading: productsLoading,
     error: productsError,
     refetch: refetchProducts,
-  } = useProducts({ page: 1 });
+  } = useProducts({ page: 1, pageSize: 8 });
   const {
     categories,
     loading: categoriesLoading,
@@ -26,6 +44,7 @@ function Home() {
     refetch: refetchCategories,
   } = useCategories();
   const { addToCart } = useCart();
+  const { toggleFavorite } = useFavorites();
   const { showToast } = useToast();
 
   function handleAddToCart(product) {
@@ -38,8 +57,13 @@ function Home() {
     );
   }
 
-  function handleToggleFavorite() {
-    showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
+  function handleToggleFavorite(product) {
+    const isNowFavorite = toggleFavorite(product);
+    showToast(
+      isNowFavorite
+        ? 'Đã thêm sản phẩm vào yêu thích.'
+        : 'Đã bỏ sản phẩm khỏi yêu thích.',
+    );
   }
 
   return (
@@ -53,25 +77,25 @@ function Home() {
             Đồ dùng đẹp, gọn gàng cho mỗi ngày.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg">
-            Những sản phẩm được chọn lọc với thiết kế tối giản, ưu tiên công
-            năng và sự bền bỉ.
+            Khám phá những sản phẩm thiết thực với thiết kế tối giản và thông
+            tin rõ ràng.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button as="link" to="/shop">
-              Xem cửa hàng
+              Khám phá sản phẩm
             </Button>
             <Link
-              to="/shop"
+              to="/favorites"
               className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              Khám phá bộ sưu tập
+              Xem yêu thích
             </Link>
           </div>
         </div>
         <div className="aspect-[4/3] rounded-lg bg-neutral-200 p-6 sm:p-8">
           <div className="flex h-full items-end border border-neutral-300 p-5 sm:p-6">
             <p className="max-w-xs text-sm font-medium text-neutral-600">
-              Một không gian sống tốt bắt đầu từ những lựa chọn vừa đủ.
+              Những lựa chọn vừa đủ cho không gian sống hiện đại.
             </p>
           </div>
         </div>
@@ -158,49 +182,44 @@ function Home() {
             to="/shop"
             className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
           >
-            Đi đến cửa hàng
+            Đến cửa hàng
           </Link>
         </div>
-        {productsLoading ? (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }, (_, index) => (
-              <Skeleton key={index} className="aspect-[4/3]" />
-            ))}
-          </div>
-        ) : productsError ? (
-          <ErrorState
-            message={getUserErrorMessage(
-              productsError,
-              'Không thể tải sản phẩm nổi bật.',
-            )}
-            action={
-              <Button variant="outline" onClick={refetchProducts}>
-                Thử lại
-              </Button>
-            }
+        <div className="mt-6">
+          <ProductGrid
+            products={products}
+            loading={productsLoading}
+            error={productsError}
+            onRetry={refetchProducts}
+            onAddToCart={handleAddToCart}
+            onToggleFavorite={handleToggleFavorite}
+            emptyTitle="Chưa có sản phẩm nổi bật"
+            emptyDescription="Danh sách sản phẩm đang được cập nhật."
           />
-        ) : products.length > 0 ? (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {products.slice(0, 3).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title="Chưa có sản phẩm"
-            description="Danh sách sản phẩm đang được cập nhật."
-            action={
-              <Button as="link" to="/shop">
-                Xem cửa hàng
-              </Button>
-            }
-          />
-        )}
+        </div>
+      </section>
+
+      <section className="page-container mt-20">
+        <div className="max-w-xl">
+          <p className="text-sm font-medium uppercase tracking-wide text-muted">
+            Mua sắm đơn giản
+          </p>
+          <h2 className="section-heading mt-2">Mọi thứ cần thiết, vừa đủ.</h2>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {benefits.map((benefit) => (
+            <Card key={benefit.title}>
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-foreground">
+                  {benefit.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  {benefit.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </section>
     </main>
   );
