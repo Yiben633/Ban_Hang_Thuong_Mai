@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { Link } from 'react-router-dom';
 import { cn } from './cn.js';
 import Spinner from './Spinner.jsx';
 
@@ -24,16 +25,20 @@ const Button = forwardRef(function Button(
     leftIcon,
     rightIcon,
     type = 'button',
+    as = 'button',
+    to,
     ...props
   },
   ref,
 ) {
+  const Component = as === 'link' ? Link : 'button';
+
   return (
-    <button
+    <Component
       ref={ref}
-      type={type}
-      disabled={disabled || loading}
+      {...(as === 'link' ? { to } : { type, disabled: disabled || loading })}
       aria-busy={loading || undefined}
+      aria-disabled={as === 'link' && (disabled || loading) ? true : undefined}
       className={cn(
         'inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
@@ -46,7 +51,7 @@ const Button = forwardRef(function Button(
       {loading ? <Spinner size="sm" label="Dang xu ly" /> : leftIcon}
       {children}
       {!loading && rightIcon}
-    </button>
+    </Component>
   );
 });
 

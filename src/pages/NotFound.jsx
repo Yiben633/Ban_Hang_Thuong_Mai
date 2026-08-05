@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
+import Button from '../components/ui/Button.jsx';
 
 function NotFound() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
+    <main className="flex min-h-[60vh] flex-1 items-center justify-center px-6 py-16">
       <section className="max-w-md text-center">
         <p className="text-sm font-medium uppercase tracking-wide text-neutral-500">
           404
@@ -13,12 +14,9 @@ function NotFound() {
         <p className="mt-4 leading-8 text-neutral-600">
           Duong dan nay khong ton tai hoac da duoc di chuyen.
         </p>
-        <Link
-          to="/"
-          className="mt-6 inline-flex rounded-lg bg-neutral-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
-        >
+        <Button as="link" to="/" className="mt-6">
           Ve trang chu
-        </Link>
+        </Button>
       </section>
     </main>
   );
