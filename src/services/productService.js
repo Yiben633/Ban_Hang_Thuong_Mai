@@ -48,6 +48,9 @@ export function normalizeProduct(product = {}) {
     rating: toNumber(
       typeof rating === 'object' ? (rating.rate ?? rating.value) : rating,
     ),
+    ratingCount: toNumber(
+      typeof rating === 'object' ? rating.count : product.ratingCount,
+    ),
     stock: stockValue == null ? undefined : toNumber(stockValue),
   };
 }
