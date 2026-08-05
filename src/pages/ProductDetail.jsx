@@ -24,11 +24,26 @@ function ProductDetail() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const { products: relatedProducts } = useProducts({
+  const {
+    products: relatedProducts,
+    loading: relatedLoading,
+    error: relatedError,
+  } = useProducts({
     category: product?.category,
     page: 1,
     enabled: Boolean(product?.category),
   });
+
+  const related = useMemo(
+    () =>
+      relatedProducts
+        .filter(
+          (item) =>
+            item.id !== product?.id && item.category === product?.category,
+        )
+        .slice(0, 4),
+    [product?.category, product?.id, relatedProducts],
+  );
 
   const gallery = useMemo(
     () => product?.images?.filter(Boolean) || ['/product-placeholder.svg'],
@@ -123,12 +138,6 @@ function ProductDetail() {
       return nextValue;
     });
   }
-
-  const related = relatedProducts
-    .filter(
-      (item) => item.id !== product.id && item.category === product.category,
-    )
-    .slice(0, 3);
 
   return (
     <main className="flex-1 py-12">
@@ -278,7 +287,7 @@ function ProductDetail() {
           </div>
         </div>
 
-        {related.length > 0 && (
+        {!relatedLoading && !relatedError && related.length > 0 && (
           <section className="mt-20 border-t border-border pt-10">
             <p className="text-sm font-medium uppercase tracking-wide text-muted">
               Có thể bạn sẽ thích
