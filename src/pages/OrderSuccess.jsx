@@ -15,7 +15,19 @@ function readLatestOrder() {
   try {
     const storedOrder = window.localStorage.getItem(LAST_ORDER_STORAGE_KEY);
     const order = storedOrder ? JSON.parse(storedOrder) : null;
-    return order && order.orderId && Array.isArray(order.items) ? order : null;
+    if (!order || !order.orderId || !Array.isArray(order.items)) return null;
+
+    const items = order.items
+      .filter((item) => item && item.id !== undefined && item.id !== null)
+      .map((item) => ({
+        ...item,
+        name: item.name || 'Sản phẩm',
+        price: Number(item.price) || 0,
+        quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),
+        subtotal: Number(item.subtotal) || 0,
+      }));
+
+    return items.length > 0 ? { ...order, items } : null;
   } catch {
     return null;
   }

@@ -177,7 +177,7 @@ function ProductDetail() {
               <div className="mt-3 grid grid-cols-4 gap-3">
                 {gallery.map((image, index) => (
                   <button
-                    key={image}
+                    key={`${image}-${index}`}
                     type="button"
                     onClick={() => setActiveImage(index)}
                     className={`aspect-square overflow-hidden rounded-md border bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${

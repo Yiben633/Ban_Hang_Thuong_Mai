@@ -15,7 +15,20 @@ function readStoredCart() {
   try {
     const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
     const parsedCart = storedCart ? JSON.parse(storedCart) : [];
-    return Array.isArray(parsedCart) ? parsedCart : [];
+    if (!Array.isArray(parsedCart)) return [];
+
+    return parsedCart
+      .filter(
+        (item) =>
+          item?.product &&
+          item.product.id !== undefined &&
+          item.product.id !== null &&
+          Number.isFinite(Number(item.quantity)),
+      )
+      .map((item) => ({
+        product: item.product,
+        quantity: Math.max(1, Math.floor(Number(item.quantity))),
+      }));
   } catch {
     return [];
   }

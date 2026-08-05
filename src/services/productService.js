@@ -23,33 +23,34 @@ function getResponseItems(response) {
 }
 
 export function normalizeProduct(product = {}) {
-  const rating = product.rating;
-  const stockValue = product.stock ?? product.quantity ?? product.inventory;
+  const safeProduct = product && typeof product === 'object' ? product : {};
+  const rating = safeProduct.rating;
+  const stockValue =
+    safeProduct.stock ?? safeProduct.quantity ?? safeProduct.inventory;
   const image =
-    product.image ||
-    product.imageUrl ||
-    product.thumbnail ||
+    safeProduct.image ||
+    safeProduct.imageUrl ||
+    safeProduct.thumbnail ||
     DEFAULT_PRODUCT_IMAGE;
-  const images = Array.isArray(product.images)
-    ? product.images.filter(Boolean)
+  const images = Array.isArray(safeProduct.images)
+    ? safeProduct.images.filter(Boolean)
     : [];
+  const hasRatingObject = rating && typeof rating === 'object';
 
   return {
-    id: String(product.id ?? product._id ?? ''),
-    name: product.name || product.title || 'Untitled product',
-    price: toNumber(product.price ?? product.salePrice),
+    id: String(safeProduct.id ?? safeProduct._id ?? ''),
+    name: safeProduct.name || safeProduct.title || 'Untitled product',
+    price: toNumber(safeProduct.price ?? safeProduct.salePrice),
     image,
     images: images.length > 0 ? images : [image],
     category:
-      typeof product.category === 'object'
-        ? product.category.name || ''
-        : product.category || '',
-    description: product.description || '',
-    rating: toNumber(
-      typeof rating === 'object' ? (rating.rate ?? rating.value) : rating,
-    ),
+      safeProduct.category && typeof safeProduct.category === 'object'
+        ? safeProduct.category.name || ''
+        : safeProduct.category || '',
+    description: safeProduct.description || '',
+    rating: toNumber(hasRatingObject ? (rating.rate ?? rating.value) : rating),
     ratingCount: toNumber(
-      typeof rating === 'object' ? rating.count : product.ratingCount,
+      hasRatingObject ? rating.count : safeProduct.ratingCount,
     ),
     stock: stockValue == null ? undefined : toNumber(stockValue),
   };
@@ -67,15 +68,17 @@ function normalizeCategory(category) {
 }
 
 function toProductPayload(product = {}) {
+  const safeProduct = product && typeof product === 'object' ? product : {};
+
   return {
-    title: product.title || product.name || '',
-    price: toNumber(product.price),
-    description: product.description || '',
-    image: product.image || '',
+    title: safeProduct.title || safeProduct.name || '',
+    price: toNumber(safeProduct.price),
+    description: safeProduct.description || '',
+    image: safeProduct.image || '',
     category:
-      typeof product.category === 'object'
-        ? product.category.name || ''
-        : product.category || '',
+      safeProduct.category && typeof safeProduct.category === 'object'
+        ? safeProduct.category.name || ''
+        : safeProduct.category || '',
   };
 }
 
@@ -94,9 +97,13 @@ export async function getProducts(params = {}) {
 }
 
 export async function getProductById(id) {
-  if (!id) throw new ApiError('Product id is required.');
+  if (id === undefined || id === null || String(id).trim() === '') {
+    throw new ApiError('Product id is required.');
+  }
 
-  const response = await getJson(`products/${encodeURIComponent(id)}`);
+  const response = await getJson(
+    `products/${encodeURIComponent(String(id).trim())}`,
+  );
   return normalizeProduct(response);
 }
 
