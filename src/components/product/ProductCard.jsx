@@ -20,7 +20,7 @@ const ProductCard = memo(function ProductCard({
   }
 
   return (
-    <article className="product-card group rounded-lg border border-border bg-surface p-4 shadow-subtle transition hover:-translate-y-0.5 hover:shadow-panel">
+    <article className="product-card group min-w-0 rounded-lg border border-border bg-surface p-4 shadow-subtle transition hover:-translate-y-0.5 hover:shadow-panel">
       <Link
         to={`/products/${product.id}`}
         className="block focus-visible:outline-none"

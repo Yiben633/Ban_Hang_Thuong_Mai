@@ -236,7 +236,7 @@ function Checkout() {
                       className="h-14 w-14 shrink-0 rounded-md bg-neutral-100 object-contain"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-sm font-medium text-foreground">
+                      <p className="line-clamp-2 break-words text-sm font-medium text-foreground">
                         {product.name}
                       </p>
                       <p className="mt-1 text-xs text-muted">
