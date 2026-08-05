@@ -1,25 +1,42 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout.jsx';
-import Cart from './pages/Cart.jsx';
-import Home from './pages/Home.jsx';
-import NotFound from './pages/NotFound.jsx';
-import ProductDetail from './pages/ProductDetail.jsx';
-import Shop from './pages/Shop.jsx';
-import UiPreview from './pages/UiPreview.jsx';
+import Skeleton from './components/ui/Skeleton.jsx';
+
+const Cart = lazy(() => import('./pages/Cart.jsx'));
+const Home = lazy(() => import('./pages/Home.jsx'));
+const NotFound = lazy(() => import('./pages/NotFound.jsx'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail.jsx'));
+const Shop = lazy(() => import('./pages/Shop.jsx'));
+const UiPreview = lazy(() => import('./pages/UiPreview.jsx'));
+
+function RouteLoading() {
+  return (
+    <main className="flex-1 py-12">
+      <section className="page-container space-y-4" aria-label="Loading page">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-10 w-2/3 max-w-md" />
+        <Skeleton className="h-40 w-full" />
+      </section>
+    </main>
+  );
+}
 
 function App() {
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/ui-preview" element={<UiPreview />} />
-        <Route path="/404" element={<NotFound />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/404" replace />} />
-    </Routes>
+    <Suspense fallback={<RouteLoading />}>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/ui-preview" element={<UiPreview />} />
+          <Route path="/404" element={<NotFound />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 

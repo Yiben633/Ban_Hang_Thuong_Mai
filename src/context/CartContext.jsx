@@ -1,5 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 const CART_STORAGE_KEY = 'mono-store-cart';
 const CartContext = createContext(null);
@@ -33,7 +40,7 @@ export function CartProvider({ children }) {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
 
-  function addItem(product, quantity = 1) {
+  const addItem = useCallback((product, quantity = 1) => {
     const requestedQuantity = Math.max(0, Math.floor(Number(quantity) || 0));
     if (!product || requestedQuantity === 0 || getStockLimit(product) === 0) {
       return false;
@@ -61,15 +68,15 @@ export function CartProvider({ children }) {
       );
     });
     return true;
-  }
+  }, []);
 
-  function removeItem(productId) {
+  const removeItem = useCallback((productId) => {
     setCartItems((currentItems) =>
       currentItems.filter((item) => item.product.id !== productId),
     );
-  }
+  }, []);
 
-  function updateQuantity(productId, quantity) {
+  const updateQuantity = useCallback((productId, quantity) => {
     setCartItems((currentItems) =>
       currentItems.flatMap((item) => {
         if (item.product.id !== productId) return [item];
@@ -77,11 +84,11 @@ export function CartProvider({ children }) {
         return nextQuantity > 0 ? [{ ...item, quantity: nextQuantity }] : [];
       }),
     );
-  }
+  }, []);
 
-  function clearCart() {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  }
+  }, []);
 
   const totalQuantity = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -91,15 +98,26 @@ export function CartProvider({ children }) {
     (total, item) => total + item.product.price * item.quantity,
     0,
   );
-  const value = {
-    cartItems,
-    totalQuantity,
-    subtotal,
-    addItem,
-    removeItem,
-    updateQuantity,
-    clearCart,
-  };
+  const value = useMemo(
+    () => ({
+      cartItems,
+      totalQuantity,
+      subtotal,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+    }),
+    [
+      cartItems,
+      totalQuantity,
+      subtotal,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+    ],
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

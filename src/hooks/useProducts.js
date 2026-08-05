@@ -53,6 +53,7 @@ function useProducts({
   inStock,
   sort,
   page,
+  enabled = true,
 } = {}) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,6 +69,14 @@ function useProducts({
 
   useEffect(() => {
     let isCurrent = true;
+
+    if (!enabled) {
+      setProducts([]);
+      setTotal(0);
+      setError(null);
+      setLoading(false);
+      return undefined;
+    }
 
     async function loadProducts() {
       setLoading(true);
@@ -98,7 +107,7 @@ function useProducts({
     return () => {
       isCurrent = false;
     };
-  }, [page, requestKey, stableParams]);
+  }, [enabled, page, requestKey, stableParams]);
 
   return {
     products,

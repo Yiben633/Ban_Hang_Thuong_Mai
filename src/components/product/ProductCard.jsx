@@ -1,9 +1,10 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../ui/Badge.jsx';
 import Button from '../ui/Button.jsx';
 import { formatPrice } from '../../services/products.js';
 
-function ProductCard({ product }) {
+const ProductCard = memo(function ProductCard({ product }) {
   return (
     <article className="group rounded-lg border border-border bg-surface p-4 shadow-subtle transition hover:-translate-y-0.5 hover:shadow-panel">
       <Link
@@ -15,6 +16,8 @@ function ProductCard({ product }) {
           <img
             src={product.image}
             alt={product.name}
+            loading="lazy"
+            decoding="async"
             className="mb-4 aspect-[4/3] w-full rounded-md bg-neutral-100 object-contain"
           />
         ) : (
@@ -55,6 +58,6 @@ function ProductCard({ product }) {
       </div>
     </article>
   );
-}
+});
 
 export default ProductCard;

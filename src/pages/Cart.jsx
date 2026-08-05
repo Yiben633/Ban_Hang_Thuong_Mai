@@ -97,6 +97,8 @@ function Cart() {
                       <img
                         src={product.image}
                         alt={product.name}
+                        loading="lazy"
+                        decoding="async"
                         className="h-20 w-20 shrink-0 rounded-md bg-neutral-100 object-contain"
                       />
                     ) : (

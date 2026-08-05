@@ -34,6 +34,7 @@ function Modal({ open, onClose, title, children, className }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
+        tabIndex="-1"
         className={cn(
           'w-full max-w-lg rounded-lg border border-border bg-surface shadow-panel',
           className,

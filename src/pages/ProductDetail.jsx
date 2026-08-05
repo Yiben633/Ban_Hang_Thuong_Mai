@@ -25,6 +25,7 @@ function ProductDetail() {
   const { products: relatedProducts } = useProducts({
     category: product?.category,
     page: 1,
+    enabled: Boolean(product?.category),
   });
 
   const gallery = useMemo(
@@ -134,6 +135,8 @@ function ProductDetail() {
                     <img
                       src={image}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-contain"
                     />
                   </button>
