@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getProducts } from '../services/productService.js';
+import { getCategories, getProducts } from '../services/productService.js';
 
 const PAGE_SIZE = 6;
 
@@ -33,7 +33,9 @@ function filterAndSortProducts(
     .sort((first, second) => {
       if (sort === 'price-asc') return first.price - second.price;
       if (sort === 'price-desc') return second.price - first.price;
+      if (sort === 'rating-desc') return second.rating - first.rating;
       if (sort === 'name-asc') return first.name.localeCompare(second.name);
+      if (sort === 'name-desc') return second.name.localeCompare(first.name);
       return 0;
     });
 }
@@ -57,6 +59,8 @@ function useProducts({
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [categoriesError, setCategoriesError] = useState(null);
   const [total, setTotal] = useState(0);
   const [requestKey, setRequestKey] = useState(0);
   const stableParams = useMemo(
@@ -104,10 +108,42 @@ function useProducts({
     };
   }, [enabled, page, requestKey, stableParams]);
 
+  useEffect(() => {
+    let isCurrent = true;
+
+    if (!enabled) {
+      setCategories([]);
+      setCategoriesError(null);
+      return undefined;
+    }
+
+    async function loadCategories() {
+      setCategoriesError(null);
+
+      try {
+        const result = await getCategories();
+        if (isCurrent) setCategories(result);
+      } catch (requestError) {
+        if (!isCurrent) return;
+        setCategories([]);
+        setCategoriesError(requestError);
+      }
+    }
+
+    loadCategories();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [enabled, requestKey]);
+
   return {
     products,
+    categories,
     loading,
     error,
+    categoriesError,
+    reload: refetch,
     refetch,
     total,
     params: stableParams,

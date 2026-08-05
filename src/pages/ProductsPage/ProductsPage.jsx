@@ -1,23 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import * as productApi from '../../api/productApi.js';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 import Input from '../../components/ui/Input.jsx';
-import { normalizeProduct } from '../../services/productService.js';
+import useProducts from '../../hooks/useProducts.js';
 import { getUserErrorMessage } from '../../utils/errors.js';
-
-function getProductsFromResponse(response) {
-  const payload = response?.data;
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.products)) return payload.products;
-  return [];
-}
-
-function getCategoriesFromResponse(response) {
-  const payload = response?.data;
-  return Array.isArray(payload) ? payload : [];
-}
 
 const SORT_OPTIONS = [
   { value: 'default', label: 'Mặc định' },
@@ -53,7 +40,6 @@ function sortProducts(products, sort) {
 
 function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState(
     searchParams.get('q') || '',
   );
@@ -61,46 +47,8 @@ function ProductsPage() {
   const [sort, setSort] = useState(
     searchParams.get('sort') || SORT_OPTIONS[0].value,
   );
-  const [categories, setCategories] = useState([]);
-  const [categoryError, setCategoryError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [reloadKey, setReloadKey] = useState(0);
-
-  const loadProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await productApi.getAll();
-      setProducts(getProductsFromResponse(response).map(normalizeProduct));
-    } catch (requestError) {
-      setProducts([]);
-      setError(requestError);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const loadCategories = useCallback(async () => {
-    setCategoryError(null);
-
-    try {
-      const response = await productApi.getCategories();
-      setCategories(getCategoriesFromResponse(response));
-    } catch (requestError) {
-      setCategories([]);
-      setCategoryError(requestError);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts, reloadKey]);
-
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
+  const { products, categories, loading, error, categoriesError, reload } =
+    useProducts();
 
   useEffect(() => {
     setSearchKeyword(searchParams.get('q') || '');
@@ -211,20 +159,20 @@ function ProductsPage() {
             id="products-category"
             value={category}
             onChange={handleCategoryChange}
-            disabled={Boolean(categoryError)}
+            disabled={Boolean(categoriesError)}
             className="mt-1.5 block min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-subtle outline-none transition focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-muted"
           >
             <option value="">Tất cả</option>
             {categories.map((item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item.name} value={item.name}>
+                {item.name}
               </option>
             ))}
           </select>
-          {categoryError && (
+          {categoriesError && (
             <p className="mt-1.5 text-sm text-muted" role="status">
               {getUserErrorMessage(
-                categoryError,
+                categoriesError,
                 'Không thể tải danh mục. Danh sách sản phẩm vẫn hoạt động.',
               )}
             </p>
@@ -266,7 +214,7 @@ function ProductsPage() {
             products={filteredProducts}
             loading={loading}
             error={error}
-            onRetry={() => setReloadKey((current) => current + 1)}
+            onRetry={reload}
             emptyTitle={
               searchKeyword.trim()
                 ? 'Không tìm thấy sản phẩm'
