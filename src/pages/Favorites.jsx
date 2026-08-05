@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Heart } from 'lucide-react';
 import Button from '../components/ui/Button.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
@@ -11,20 +12,26 @@ function Favorites() {
   const { addToCart } = useCart();
   const { showToast } = useToast();
 
-  function handleRemoveFavorite(product) {
-    removeFavorite(product.id);
-    showToast('Đã bỏ sản phẩm khỏi danh sách yêu thích.');
-  }
+  const handleRemoveFavorite = useCallback(
+    (product) => {
+      removeFavorite(product.id);
+      showToast('Đã bỏ sản phẩm khỏi danh sách yêu thích.');
+    },
+    [removeFavorite, showToast],
+  );
 
-  function handleAddToCart(product) {
-    const wasAdded = addToCart(product);
-    showToast(
-      wasAdded
-        ? 'Đã thêm sản phẩm vào giỏ hàng.'
-        : 'Không thể thêm sản phẩm vào giỏ hàng.',
-      { type: wasAdded ? 'success' : 'error' },
-    );
-  }
+  const handleAddToCart = useCallback(
+    (product) => {
+      const wasAdded = addToCart(product);
+      showToast(
+        wasAdded
+          ? 'Đã thêm sản phẩm vào giỏ hàng.'
+          : 'Không thể thêm sản phẩm vào giỏ hàng.',
+        { type: wasAdded ? 'success' : 'error' },
+      );
+    },
+    [addToCart, showToast],
+  );
 
   return (
     <main className="flex-1 py-12 sm:py-16">

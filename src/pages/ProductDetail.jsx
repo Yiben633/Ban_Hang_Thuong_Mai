@@ -169,6 +169,7 @@ function ProductDetail() {
               <img
                 src={gallery[activeImage]}
                 alt={product.name}
+                loading="lazy"
                 className="h-full w-full object-contain"
               />
             </div>

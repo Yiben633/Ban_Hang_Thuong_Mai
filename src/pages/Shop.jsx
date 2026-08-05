@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductFilters from '../components/product/ProductFilters.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
@@ -106,19 +106,22 @@ function Shop() {
     setSearchParams(nextParams);
   }
 
-  function handleAddToCart(product) {
-    const wasAdded = addToCart(product);
-    showToast(
-      wasAdded
-        ? 'Đã thêm sản phẩm vào giỏ hàng.'
-        : 'Không thể thêm sản phẩm vào giỏ hàng.',
-      { type: wasAdded ? 'success' : 'error' },
-    );
-  }
+  const handleAddToCart = useCallback(
+    (product) => {
+      const wasAdded = addToCart(product);
+      showToast(
+        wasAdded
+          ? 'Đã thêm sản phẩm vào giỏ hàng.'
+          : 'Không thể thêm sản phẩm vào giỏ hàng.',
+        { type: wasAdded ? 'success' : 'error' },
+      );
+    },
+    [addToCart, showToast],
+  );
 
-  function handleToggleFavorite() {
+  const handleToggleFavorite = useCallback(() => {
     showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
-  }
+  }, [showToast]);
 
   const pageCount = Math.ceil(total / pageSize);
   const hasActiveFilters =

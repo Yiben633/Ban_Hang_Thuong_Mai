@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -47,24 +48,30 @@ function Home() {
   const { toggleFavorite } = useFavorites();
   const { showToast } = useToast();
 
-  function handleAddToCart(product) {
-    const wasAdded = addToCart(product);
-    showToast(
-      wasAdded
-        ? 'Đã thêm sản phẩm vào giỏ hàng.'
-        : 'Không thể thêm sản phẩm vào giỏ hàng.',
-      { type: wasAdded ? 'success' : 'error' },
-    );
-  }
+  const handleAddToCart = useCallback(
+    (product) => {
+      const wasAdded = addToCart(product);
+      showToast(
+        wasAdded
+          ? 'Đã thêm sản phẩm vào giỏ hàng.'
+          : 'Không thể thêm sản phẩm vào giỏ hàng.',
+        { type: wasAdded ? 'success' : 'error' },
+      );
+    },
+    [addToCart, showToast],
+  );
 
-  function handleToggleFavorite(product) {
-    const isNowFavorite = toggleFavorite(product);
-    showToast(
-      isNowFavorite
-        ? 'Đã thêm sản phẩm vào yêu thích.'
-        : 'Đã bỏ sản phẩm khỏi yêu thích.',
-    );
-  }
+  const handleToggleFavorite = useCallback(
+    (product) => {
+      const isNowFavorite = toggleFavorite(product);
+      showToast(
+        isNowFavorite
+          ? 'Đã thêm sản phẩm vào yêu thích.'
+          : 'Đã bỏ sản phẩm khỏi yêu thích.',
+      );
+    },
+    [showToast, toggleFavorite],
+  );
 
   return (
     <main className="flex-1 py-12 sm:py-16">

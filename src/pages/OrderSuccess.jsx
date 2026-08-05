@@ -108,6 +108,7 @@ function OrderSuccess() {
                     <img
                       src={item.image}
                       alt={item.name}
+                      loading="lazy"
                       className="h-12 w-12 shrink-0 rounded-md bg-neutral-100 object-contain"
                     />
                     <div className="min-w-0 flex-1">

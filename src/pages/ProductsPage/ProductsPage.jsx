@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
@@ -116,19 +116,22 @@ function ProductsPage() {
     handleSearchChange({ target: { value: '' } });
   }
 
-  function handleAddToCart(product) {
-    const wasAdded = addToCart(product);
-    showToast(
-      wasAdded
-        ? 'Đã thêm sản phẩm vào giỏ hàng.'
-        : 'Không thể thêm sản phẩm vào giỏ hàng.',
-      { type: wasAdded ? 'success' : 'error' },
-    );
-  }
+  const handleAddToCart = useCallback(
+    (product) => {
+      const wasAdded = addToCart(product);
+      showToast(
+        wasAdded
+          ? 'Đã thêm sản phẩm vào giỏ hàng.'
+          : 'Không thể thêm sản phẩm vào giỏ hàng.',
+        { type: wasAdded ? 'success' : 'error' },
+      );
+    },
+    [addToCart, showToast],
+  );
 
-  function handleToggleFavorite() {
+  const handleToggleFavorite = useCallback(() => {
     showToast('Tính năng yêu thích sẽ được hoàn thiện ở bước tiếp theo.');
-  }
+  }, [showToast]);
 
   return (
     <main className="flex-1 py-12 sm:py-16">
