@@ -19,6 +19,38 @@ function getCategoriesFromResponse(response) {
   return Array.isArray(payload) ? payload : [];
 }
 
+const SORT_OPTIONS = [
+  { value: 'default', label: 'Mặc định' },
+  { value: 'price-asc', label: 'Giá tăng dần' },
+  { value: 'price-desc', label: 'Giá giảm dần' },
+  { value: 'rating-desc', label: 'Đánh giá cao nhất' },
+  { value: 'name-asc', label: 'Tên A-Z' },
+  { value: 'name-desc', label: 'Tên Z-A' },
+];
+
+function sortProducts(products, sort) {
+  const sortedProducts = [...products];
+
+  switch (sort) {
+    case 'price-asc':
+      return sortedProducts.sort((a, b) => a.price - b.price);
+    case 'price-desc':
+      return sortedProducts.sort((a, b) => b.price - a.price);
+    case 'rating-desc':
+      return sortedProducts.sort((a, b) => b.rating - a.rating);
+    case 'name-asc':
+      return sortedProducts.sort((a, b) =>
+        a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }),
+      );
+    case 'name-desc':
+      return sortedProducts.sort((a, b) =>
+        b.name.localeCompare(a.name, 'vi', { sensitivity: 'base' }),
+      );
+    default:
+      return sortedProducts;
+  }
+}
+
 function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
@@ -26,6 +58,9 @@ function ProductsPage() {
     searchParams.get('q') || '',
   );
   const [category, setCategory] = useState(searchParams.get('category') || '');
+  const [sort, setSort] = useState(
+    searchParams.get('sort') || SORT_OPTIONS[0].value,
+  );
   const [categories, setCategories] = useState([]);
   const [categoryError, setCategoryError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,13 +105,14 @@ function ProductsPage() {
   useEffect(() => {
     setSearchKeyword(searchParams.get('q') || '');
     setCategory(searchParams.get('category') || '');
+    setSort(searchParams.get('sort') || SORT_OPTIONS[0].value);
   }, [searchParams]);
 
   const filteredProducts = useMemo(() => {
     const keyword = searchKeyword.trim().toLocaleLowerCase();
     const selectedCategory = category.trim().toLocaleLowerCase();
 
-    return products.filter((product) => {
+    const matchingProducts = products.filter((product) => {
       const matchesKeyword =
         !keyword || product.name.toLocaleLowerCase().includes(keyword);
       const matchesCategory =
@@ -85,7 +121,9 @@ function ProductsPage() {
 
       return matchesKeyword && matchesCategory;
     });
-  }, [category, products, searchKeyword]);
+
+    return sortProducts(matchingProducts, sort);
+  }, [category, products, searchKeyword, sort]);
 
   function handleCategoryChange(event) {
     const value = event.target.value;
@@ -99,6 +137,16 @@ function ProductsPage() {
 
   function handleClearCategory() {
     handleCategoryChange({ target: { value: '' } });
+  }
+
+  function handleSortChange(event) {
+    const value = event.target.value;
+    const nextParams = new URLSearchParams(searchParams);
+
+    setSort(value);
+    if (value === SORT_OPTIONS[0].value) nextParams.delete('sort');
+    else nextParams.set('sort', value);
+    setSearchParams(nextParams, { replace: true });
   }
 
   function handleSearchChange(event) {
@@ -190,6 +238,27 @@ function ProductsPage() {
               Xóa bộ lọc danh mục
             </button>
           )}
+        </div>
+
+        <div className="mt-4 max-w-md">
+          <label
+            htmlFor="products-sort"
+            className="block text-sm font-medium text-foreground"
+          >
+            Sắp xếp
+          </label>
+          <select
+            id="products-sort"
+            value={sort}
+            onChange={handleSortChange}
+            className="mt-1.5 block min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-subtle outline-none transition focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="mt-8">
