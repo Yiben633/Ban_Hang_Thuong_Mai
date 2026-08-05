@@ -5,6 +5,7 @@ import * as productApi from '../../api/productApi.js';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 import Input from '../../components/ui/Input.jsx';
 import { normalizeProduct } from '../../services/productService.js';
+import { getUserErrorMessage } from '../../utils/errors.js';
 
 function getProductsFromResponse(response) {
   const payload = response?.data;
@@ -13,12 +14,20 @@ function getProductsFromResponse(response) {
   return [];
 }
 
+function getCategoriesFromResponse(response) {
+  const payload = response?.data;
+  return Array.isArray(payload) ? payload : [];
+}
+
 function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState(
     searchParams.get('q') || '',
   );
+  const [category, setCategory] = useState(searchParams.get('category') || '');
+  const [categories, setCategories] = useState([]);
+  const [categoryError, setCategoryError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -38,22 +47,59 @@ function ProductsPage() {
     }
   }, []);
 
+  const loadCategories = useCallback(async () => {
+    setCategoryError(null);
+
+    try {
+      const response = await productApi.getCategories();
+      setCategories(getCategoriesFromResponse(response));
+    } catch (requestError) {
+      setCategories([]);
+      setCategoryError(requestError);
+    }
+  }, []);
+
   useEffect(() => {
     loadProducts();
   }, [loadProducts, reloadKey]);
 
   useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
+  useEffect(() => {
     setSearchKeyword(searchParams.get('q') || '');
+    setCategory(searchParams.get('category') || '');
   }, [searchParams]);
 
   const filteredProducts = useMemo(() => {
     const keyword = searchKeyword.trim().toLocaleLowerCase();
-    if (!keyword) return products;
+    const selectedCategory = category.trim().toLocaleLowerCase();
 
-    return products.filter((product) =>
-      product.name.toLocaleLowerCase().includes(keyword),
-    );
-  }, [products, searchKeyword]);
+    return products.filter((product) => {
+      const matchesKeyword =
+        !keyword || product.name.toLocaleLowerCase().includes(keyword);
+      const matchesCategory =
+        !selectedCategory ||
+        product.category.toLocaleLowerCase() === selectedCategory;
+
+      return matchesKeyword && matchesCategory;
+    });
+  }, [category, products, searchKeyword]);
+
+  function handleCategoryChange(event) {
+    const value = event.target.value;
+    const nextParams = new URLSearchParams(searchParams);
+
+    setCategory(value);
+    if (value) nextParams.set('category', value);
+    else nextParams.delete('category');
+    setSearchParams(nextParams, { replace: true });
+  }
+
+  function handleClearCategory() {
+    handleCategoryChange({ target: { value: '' } });
+  }
 
   function handleSearchChange(event) {
     const value = event.target.value;
@@ -106,6 +152,46 @@ function ProductsPage() {
           />
         </div>
 
+        <div className="mt-4 max-w-md">
+          <label
+            htmlFor="products-category"
+            className="block text-sm font-medium text-foreground"
+          >
+            Danh mục
+          </label>
+          <select
+            id="products-category"
+            value={category}
+            onChange={handleCategoryChange}
+            disabled={Boolean(categoryError)}
+            className="mt-1.5 block min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground shadow-subtle outline-none transition focus:border-foreground focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-muted"
+          >
+            <option value="">Tất cả</option>
+            {categories.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+          {categoryError && (
+            <p className="mt-1.5 text-sm text-muted" role="status">
+              {getUserErrorMessage(
+                categoryError,
+                'Không thể tải danh mục. Danh sách sản phẩm vẫn hoạt động.',
+              )}
+            </p>
+          )}
+          {category && (
+            <button
+              type="button"
+              onClick={handleClearCategory}
+              className="mt-2 text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
+            >
+              Xóa bộ lọc danh mục
+            </button>
+          )}
+        </div>
+
         <div className="mt-8">
           <ProductGrid
             products={filteredProducts}
@@ -115,12 +201,16 @@ function ProductsPage() {
             emptyTitle={
               searchKeyword.trim()
                 ? 'Không tìm thấy sản phẩm'
-                : 'Không có sản phẩm'
+                : category
+                  ? 'Không có sản phẩm phù hợp'
+                  : 'Không có sản phẩm'
             }
             emptyDescription={
               searchKeyword.trim()
                 ? 'Thử tìm kiếm bằng từ khóa khác.'
-                : 'Hiện chưa có sản phẩm để hiển thị.'
+                : category
+                  ? 'Thử chọn danh mục khác.'
+                  : 'Hiện chưa có sản phẩm để hiển thị.'
             }
           />
         </div>
