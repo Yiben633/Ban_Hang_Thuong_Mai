@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -32,6 +32,7 @@ const benefits = [
 ];
 
 function Home() {
+  const [heroImageIndex, setHeroImageIndex] = useState(0);
   const {
     products,
     loading: productsLoading,
@@ -47,6 +48,17 @@ function Home() {
   const { addToCart } = useCart();
   const { toggleFavorite } = useFavorites();
   const { showToast } = useToast();
+  const heroProduct = products[heroImageIndex % Math.max(products.length, 1)];
+
+  useEffect(() => {
+    if (products.length < 2) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      setHeroImageIndex((current) => (current + 1) % products.length);
+    }, 4200);
+
+    return () => window.clearInterval(intervalId);
+  }, [products.length]);
 
   const handleAddToCart = useCallback(
     (product) => {
@@ -98,16 +110,17 @@ function Home() {
               </Link>
             </div>
           </div>
-          <div className="hero-product relative z-10 flex aspect-[4/3] items-end border border-border bg-background p-5 sm:p-7">
-            <div className="hero-product__index">API / 01</div>
+          <div className="hero-product relative z-10 flex aspect-[4/3] items-center justify-center border border-border bg-background p-5 sm:p-7">
+            <div className="hero-product__index hidden">API / 01</div>
             <img
-              src={products[0]?.image || '/product-placeholder.svg'}
+              key={heroProduct?.id || 'placeholder'}
+              src={heroProduct?.image || '/product-placeholder.svg'}
               alt={products[0]?.name || 'Sản phẩm được chọn'}
               loading="eager"
               decoding="async"
               className="hero-product__image"
             />
-            <div className="w-full border-t border-border pt-4">
+            <div className="hidden w-full border-t border-border pt-4">
               <p className="editorial-kicker">01 / vật dụng chọn lọc</p>
               <p className="mt-3 max-w-xs text-sm font-medium leading-6 text-muted">
                 {products[0]?.name ||
