@@ -92,6 +92,25 @@
     @apply text-5xl font-bold leading-[1.02] tracking-normal text-foreground sm:text-7xl;
   }
 
+  .hero-product {
+    isolation: isolate;
+  }
+
+  .hero-product::before {
+    content: '';
+    @apply absolute inset-5 border border-border sm:inset-7;
+    background: var(--paper-panel);
+    z-index: -1;
+  }
+
+  .hero-product__index {
+    @apply absolute right-5 top-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-accent sm:right-7 sm:top-7;
+  }
+
+  .hero-product__image {
+    @apply absolute left-1/2 top-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-[58%] object-contain mix-blend-multiply;
+  }
+
   .category-tile {
     @apply relative min-h-44 overflow-hidden border border-border bg-surface p-5 transition duration-200 hover:-translate-y-1 hover:shadow-panel;
   }

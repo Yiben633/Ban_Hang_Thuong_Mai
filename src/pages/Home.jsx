@@ -98,11 +98,20 @@ function Home() {
               </Link>
             </div>
           </div>
-          <div className="relative z-10 flex aspect-[4/3] items-end border border-border bg-background p-5 sm:p-7">
+          <div className="hero-product relative z-10 flex aspect-[4/3] items-end border border-border bg-background p-5 sm:p-7">
+            <div className="hero-product__index">API / 01</div>
+            <img
+              src={products[0]?.image || '/product-placeholder.svg'}
+              alt={products[0]?.name || 'Sản phẩm được chọn'}
+              loading="eager"
+              decoding="async"
+              className="hero-product__image"
+            />
             <div className="w-full border-t border-border pt-4">
               <p className="editorial-kicker">01 / vật dụng chọn lọc</p>
               <p className="mt-3 max-w-xs text-sm font-medium leading-6 text-muted">
-                Những lựa chọn vừa đủ cho không gian sống hiện đại.
+                {products[0]?.name ||
+                  'Những lựa chọn vừa đủ cho không gian sống hiện đại.'}
               </p>
             </div>
           </div>
