@@ -88,8 +88,8 @@
   }
 
   .hero-title {
-    font-family: Georgia, 'Times New Roman', serif;
-    @apply text-5xl font-bold leading-[0.98] tracking-normal text-foreground sm:text-7xl;
+    font-family: Cambria, 'Times New Roman', serif;
+    @apply text-5xl font-bold leading-[1.02] tracking-normal text-foreground sm:text-7xl;
   }
 
   .category-tile {

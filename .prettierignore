@@ -5,3 +5,4 @@ vibecode-website-ban-hang.md
 .env.example
 public/_redirects
 reference
+public/*.svg

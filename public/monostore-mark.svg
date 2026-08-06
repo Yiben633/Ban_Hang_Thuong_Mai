@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>MonoStore</title>
+  <rect width="64" height="64" fill="#1f1f1d" />
+  <path d="M16 18h8v28h-8zM28 18h8v28h-8zM40 18h8v28h-8z" fill="#f7f5f0" />
+  <path d="M12 50h40" stroke="#c45538" stroke-width="4" />
+</svg>
