@@ -5,14 +5,15 @@
 @layer base {
   :root {
     color-scheme: light;
-    --primary-color: #171717;
-    --secondary-color: #404040;
-    --background-color: #fafafa;
-    --text-color: #171717;
-    --muted-color: #737373;
-    --border-color: #e5e5e5;
-    --danger-color: #525252;
-    --success-color: #404040;
+    --primary-color: #c45538;
+    --secondary-color: #9e3d29;
+    --background-color: #f7f5f0;
+    --text-color: #1f1f1d;
+    --muted-color: #706f69;
+    --border-color: #dedbd2;
+    --danger-color: #9e3d29;
+    --success-color: #46624a;
+    --paper-panel: #ece9e1;
   }
 
   html {
@@ -74,6 +75,45 @@
     @apply text-2xl font-semibold tracking-tight text-foreground sm:text-3xl;
   }
 
+  .editorial-kicker {
+    @apply font-mono text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted;
+  }
+
+  .editorial-rule {
+    @apply border-t border-border;
+  }
+
+  .hero-panel {
+    @apply relative overflow-hidden border border-border bg-[var(--paper-panel)];
+  }
+
+  .hero-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    @apply text-5xl font-bold leading-[0.98] tracking-normal text-foreground sm:text-7xl;
+  }
+
+  .category-tile {
+    @apply relative min-h-44 overflow-hidden border border-border bg-surface p-5 transition duration-200 hover:-translate-y-1 hover:shadow-panel;
+  }
+
+  .category-tile::after {
+    content: '';
+    @apply absolute -bottom-10 -right-10 h-28 w-28 rounded-full transition-transform duration-200;
+    background: rgb(196 85 56 / 0.1);
+  }
+
+  .category-tile:hover::after {
+    @apply scale-125;
+  }
+
+  .category-tile__number {
+    @apply font-mono text-xs font-semibold text-accent;
+  }
+
+  .product-card {
+    @apply bg-surface/90;
+  }
+
   .toast-enter {
     animation: toast-in 180ms ease-out both;
   }
@@ -88,5 +128,16 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

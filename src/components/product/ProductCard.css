@@ -1,10 +1,20 @@
 .product-card__image {
   display: block;
-  transition: transform 180ms ease;
+  background: var(--paper-panel);
+  transition: transform 220ms ease;
 }
 
 .product-card:hover .product-card__image {
-  transform: scale(1.02);
+  transform: scale(1.035);
+}
+
+.product-card {
+  border-color: rgb(31 31 29 / 0.15);
+  box-shadow: 0 1px 0 rgb(31 31 29 / 0.04);
+}
+
+.product-card:hover {
+  border-color: rgb(196 85 56 / 0.55);
 }
 
 .product-card__title {

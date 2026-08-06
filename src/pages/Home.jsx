@@ -74,36 +74,37 @@ function Home() {
   );
 
   return (
-    <main className="flex-1 py-12 sm:py-16">
-      <section className="page-container grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-        <div className="max-w-2xl">
-          <p className="text-sm font-medium uppercase tracking-wide text-muted">
-            {appName}
-          </p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
-            Đồ dùng đẹp, gọn gàng cho mỗi ngày.
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg">
-            Khám phá những sản phẩm thiết thực với thiết kế tối giản và thông
-            tin rõ ràng.
-          </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Button as="link" to="/shop">
-              Khám phá sản phẩm
-            </Button>
-            <Link
-              to="/favorites"
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              Xem yêu thích
-            </Link>
-          </div>
-        </div>
-        <div className="aspect-[4/3] rounded-lg bg-neutral-200 p-6 sm:p-8">
-          <div className="flex h-full items-end border border-neutral-300 p-5 sm:p-6">
-            <p className="max-w-xs text-sm font-medium text-neutral-600">
-              Những lựa chọn vừa đủ cho không gian sống hiện đại.
+    <main className="flex-1 py-8 sm:py-12">
+      <section className="page-container">
+        <div className="hero-panel grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:p-14">
+          <div className="relative z-10 max-w-2xl">
+            <p className="editorial-kicker">{appName} / tuyển chọn hằng ngày</p>
+            <h1 className="hero-title mt-5 max-w-3xl">
+              Đồ dùng đẹp, gọn gàng cho mỗi ngày.
+            </h1>
+            <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg">
+              Khám phá những sản phẩm thiết thực với thiết kế tối giản và thông
+              tin rõ ràng.
             </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button as="link" to="/shop">
+                Khám phá sản phẩm
+              </Button>
+              <Link
+                to="/favorites"
+                className="inline-flex min-h-10 items-center border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                Xem yêu thích
+              </Link>
+            </div>
+          </div>
+          <div className="relative z-10 flex aspect-[4/3] items-end border border-border bg-background p-5 sm:p-7">
+            <div className="w-full border-t border-border pt-4">
+              <p className="editorial-kicker">01 / vật dụng chọn lọc</p>
+              <p className="mt-3 max-w-xs text-sm font-medium leading-6 text-muted">
+                Những lựa chọn vừa đủ cho không gian sống hiện đại.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -111,9 +112,7 @@ function Home() {
       <section className="page-container mt-20">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              Danh mục
-            </p>
+            <p className="editorial-kicker">01 / danh mục</p>
             <h2 className="section-heading mt-2">Chọn theo nhu cầu</h2>
           </div>
           <Link
@@ -148,13 +147,13 @@ function Home() {
                 key={category.name}
                 to={`/shop?category=${encodeURIComponent(category.name)}`}
               >
-                <Card className="group h-full transition hover:-translate-y-0.5 hover:shadow-panel">
+                <Card className="category-tile group h-full">
                   <CardContent className="p-0">
                     <div
                       className={`h-2 ${index === 1 ? 'bg-neutral-400' : 'bg-neutral-200'}`}
                     />
                     <div className="p-6">
-                      <p className="text-sm font-medium text-muted">
+                      <p className="category-tile__number">
                         {String(index + 1).padStart(2, '0')}
                       </p>
                       <h3 className="mt-8 break-words text-lg font-semibold text-foreground group-hover:underline">
@@ -181,7 +180,7 @@ function Home() {
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              Gợi ý cho bạn
+              02 / tuyển chọn
             </p>
             <h2 className="section-heading mt-2">Sản phẩm nổi bật</h2>
           </div>
@@ -208,9 +207,7 @@ function Home() {
 
       <section className="page-container mt-20">
         <div className="max-w-xl">
-          <p className="text-sm font-medium uppercase tracking-wide text-muted">
-            Mua sắm đơn giản
-          </p>
+          <p className="editorial-kicker">03 / mua sắm đơn giản</p>
           <h2 className="section-heading mt-2">Mọi thứ cần thiết, vừa đủ.</h2>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-3">

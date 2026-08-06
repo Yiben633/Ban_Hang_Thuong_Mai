@@ -38,14 +38,19 @@ function Header({ cartCount = 0 }) {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="page-container">
-        <div className="flex min-h-16 items-center gap-4">
+        <div className="flex min-h-[4.5rem] items-center gap-4">
           <Link
             to="/"
-            className="shrink-0 text-base font-semibold tracking-tight text-foreground"
+            className="group flex shrink-0 items-center gap-2 text-foreground"
           >
-            {appName}
+            <span className="flex h-8 w-8 items-center justify-center bg-foreground font-mono text-xs font-bold text-background transition group-hover:bg-accent group-hover:text-accent-foreground">
+              FS
+            </span>
+            <span className="text-base font-semibold tracking-tight">
+              {appName}
+            </span>
           </Link>
 
           <nav
@@ -59,10 +64,10 @@ function Header({ cartCount = 0 }) {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    'flex items-center gap-2 border-b-2 border-transparent px-3 py-3 text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-neutral-100 text-foreground'
-                      : 'text-muted hover:bg-neutral-100 hover:text-foreground',
+                      ? 'border-accent text-foreground'
+                      : 'text-muted hover:border-border hover:text-foreground',
                   )
                 }
               >
@@ -116,7 +121,7 @@ function Header({ cartCount = 0 }) {
                   ? `Giỏ hàng, ${visibleCartCount} sản phẩm`
                   : 'Giỏ hàng'
               }
-              className="relative inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none"
+              className="relative inline-flex h-10 w-10 items-center justify-center text-foreground transition hover:text-accent focus-visible:outline-none"
             >
               <ShoppingCart size={20} aria-hidden="true" />
               <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-4 text-accent-foreground">
@@ -129,7 +134,7 @@ function Header({ cartCount = 0 }) {
               aria-label={menuOpen ? 'Đóng menu' : 'Mở menu'}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((current) => !current)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground transition hover:bg-neutral-100 focus-visible:outline-none md:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center text-foreground transition hover:text-accent focus-visible:outline-none md:hidden"
             >
               {menuOpen ? (
                 <X size={20} aria-hidden="true" />
@@ -181,9 +186,9 @@ function Header({ cartCount = 0 }) {
                   end={item.end}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium',
+                      'flex items-center gap-2 border-l-2 border-transparent px-3 py-2.5 text-sm font-medium',
                       isActive
-                        ? 'bg-neutral-100 text-foreground'
+                        ? 'border-accent bg-surface text-foreground'
                         : 'text-muted',
                     )
                   }
